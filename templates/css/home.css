@@ -1,0 +1,29 @@
+#vm-count-label {
+	display: inline;
+	line-height: 30px;
+	margin-left: 15px;
+}
+#host-count-label {
+	display: inline;
+	line-height: 30px;
+	margin-left: 15px;
+}
+
+#main-data-table tbody {
+	cursor: pointer;
+}
+
+#host-data-table tbody {
+	cursor: pointer;
+}
+
+#vm-count-label label {
+	font-weight: normal;
+}
+#host-count-label label {
+	font-weight: normal;
+}
+
+.tablist {
+    margin-bottom: 20px;
+}

@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+
+{% block title %}
+    iDashBoard Audit
+{% endblock %}
+
+{% block custom_css %}
+    <link rel="stylesheet" href="/css/audit.css">
+{% endblock %}
+
+{% block custom_js %}
+    <script src="/js/audit.js"></script>
+{% endblock %}
+
+{% block audit_active %}
+    class = "active"
+{% endblock %}
+
+{% block container %}
+    <div class="container">
+    <div class="row">
+        <!-- <div class="col-md-10 col-md-offset-1"> -->
+        <div class="col-md-12">
+            <ul class="nav nav-pills">
+              <li role="presentation" class="active" id="create-tab">
+                  <a href="#create-applications">
+                      Create Applications<span class="badge">{{ create_application_num }}</span>
+                  </a>
+              </li>
+              <li role="presentation" id="delete-tab">
+                  <a href="#delete-applications">
+                      Delete Applications<span class="badge">{{ delete_application_num }}</span>
+                  </a>
+              </li>
+              <li role="presentation" id="nat-tab">
+                  <a href="#nat-applications">
+                      NAT Applications<span class="badge">{{ port_application_num }}</span>
+                  </a>
+              </li>
+            </ul>
+        </div>
+    </div>
+    <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active" id="create-applications">
+            <br />
+            <table id="create-applications-table" class="display table table-hover table-bordered" cellspacing="0" width="100%">
+                <thead>
+                    <tr>
+                        <th class="hiding">Application ID</th>
+                        <th>Applicant</th>
+                        <th>VM Type</th>
+                        <th>OS</th>
+                        <th>memory</th>
+                        <th>Submission Time</th>
+                        <th>Manage</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for application in create_applications %}
+                    <tr id="application-{{ application.id }}" class="create">
+                        <td class="application-id hiding">{{ application.id }}</td>
+                        <td>{{ application.applicant }}</td>
+                        <td>{{ application.vm_type }}</td>
+                        <td>{{ application.os }}</td>
+                        <td>{{ application.memory }}</td>
+                        <td>{{ application.submission_time }}</td>
+                        <td>
+                            <div>
+                                <button class="approve-button btn btn-success">Approve</button>
+                                <button class="refuse-button btn btn-danger">Refuse</button>
+                                <button class="remove-button hiding btn btn-info"><i class="fa fa-trash"> Remove</i></button>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div role="tabpanel" class="tab-pane" id="delete-applications">
+            <br />
+            <table id="delete-applications-table" class="display table table-hover table-bordered" cellspacing="0" width="100%">
+                <thead>
+                    <tr>
+                        <th class="hiding">Application ID</th>
+                        <th>Applicant</th>
+                        <th>VM Name</th>
+                        <th>Host IP</th>
+                        <th>Submission Time</th>
+                        <th>Manage</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for application in delete_applications %}
+                    <tr id="application-{{ application.id }}" class="create">
+                        <td class="application-id hiding">{{ application.id }}</td>
+                        <td>{{ application.applicant }}</td>
+                        <td>{{ application.vm_name }}</td>
+                        <td>{{ application.host_ip }}</td>
+                        <td>{{ application.submission_time }}</td>
+                        <td>
+                            <div>
+                                <button class="approve-button btn btn-success">Approve</button>
+                                <button class="refuse-button btn btn-danger">Refuse</button>
+                                <button class="remove-button hiding btn btn-info"><i class="fa fa-trash"> Remove</i></button>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div role="tabpanel" class="tab-pane" id="nat-applications">
+            <br />
+            <table id="nat-applications-table" class="display table table-hover table-bordered" cellspacing="0" width="100%">
+                <thead>
+                    <tr>
+                        <th class="hiding">Application ID</th>
+                        <th>Applicant</th>
+                        <th>VM Name</th>
+                        <th>Host IP</th>
+                        <th>Protocol</th>
+                        <th>Host Port</th>
+                        <th>VM Port</th>
+                        <th>Submission Time</th>
+                        <th>Manage</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for application in port_applications %}
+                    <tr id="application-{{ application.id }}" class="create">
+                        <td class="application-id hiding">{{ application.id }}</td>
+                        <td>{{ application.applicant }}</td>
+                        <td>{{ application.vm_name }}</td>
+                        <td>{{ application.host_ip }}</td>
+                        <td>{{ application.protocol }}</td>
+                        <td>{{ application.host_port }}</td>
+                        <td>{{ application.vm_port }}</td>
+                        <td>{{ application.submission_time }}</td>
+                        <td>
+                            <div>
+                                <button class="approve-button btn btn-success">Approve</button>
+                                <button class="refuse-button btn btn-danger">Refuse</button>
+                                <button class="remove-button hiding btn btn-info"><i class="fa fa-trash"> Remove</i></button>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+      </div>
+</div>
+{% endblock %}

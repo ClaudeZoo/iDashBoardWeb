@@ -1,0 +1,12 @@
+.page-image {
+	padding: 0px;
+	margin-top: 20px;
+	margin-left: 60px;
+	max-width: 100%;
+}
+
+label.error {
+	font-size: 12px;
+	font-weight: inherit;
+	color: red;
+}

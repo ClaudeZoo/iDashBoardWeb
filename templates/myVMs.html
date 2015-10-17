@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+
+{% block title %}
+My Virtual Machines
+{% endblock %}
+
+{% block custom_css %}
+    <link rel="stylesheet" href="/css/settings.css">
+{% endblock %}
+
+{% block custom_js %}
+    <script src="/js/myVMs.js"></script>
+{% endblock %}
+
+{% block vms_active %}
+    class = "active"
+{% endblock %}
+
+{% block container %}
+    <div class="container">
+        <div class="row">
+            <!-- <div class="col-md-10 col-md-offset-1"> -->
+            <div class="col-md-12">
+                <!-- Datatable元素 -->
+                <table id="myVMs-data-table" class="display table table-hover table-bordered" cellspacing="0" width="100%">
+                    <thead>
+                        <tr>
+                            <th>VM Name</th>
+                            <th class="hiding">VM UUID</th>
+                            <th class="hiding">VM Host</th>
+                            <th>IP : Port (For SSH)</th>
+                            <th>VM Type</th>
+                            <th>OS</th>
+                            <th>Memory</th>
+                            <th>State</th>
+                            <th>Manage</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for vm in vms %}
+                        <tr>
+                            <td class="vm-name">{{ vm.name }}</td>
+                            <td class="hiding vm-uuid">{{ vm.uuid }}</td>
+                            <td class="hiding host-id">{{ vm.host }}</td>
+                            <td>{{ vm.ip }} : {{ vm.ssh_port }}</td>
+                            <td>{{ vm.vm_type}}</td>
+                            <td>{{ vm.os }}</td>
+                            <td>{{ vm.memory }}</td>
+                            <td class="state-td">
+                                <i class="fa"> {{ vm.state }}</i>
+                                <div class="progress hiding">
+                                    <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 60%">
+                                        <span class="sr-only">60%</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-success start-button"><i class="fa fa-play"> Start</i></button>
+                                    <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <span class="caret"></span>
+                                        <span class="sr-only">Toggle Dropdown</span>
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li class="shutdown-button"><a href="#"><i class="fa fa-power-off"> Shutdown</i></a></li>
+                                        <li class="hibernate-button"><a href="#"><i class="fa fa-pause"> Hibernate</i></a></li>
+                                        <li role="separator" class="divider"></li>
+                                        <li class="nat-button" data-toggle="modal" data-target="#natModal"><a href="#"><i class="fa fa-gears"> NAT Apply</i></a></li>
+                                        <li role="separator" class="divider"></li>
+                                        <li class="delete-button" data-toggle="modal" data-target="#deleteModal"><a href="#"><i class="fa fa-trash-o"> Delete</i></a></li>
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">确认删除</h4>
+                </div>
+                <div class="modal-body">
+                    确定要删除这台虚拟机么？
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" onclick=confirmDelete()>确定</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="natModal" tabindex="-1" role="dialog" aria-labelledby="natModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">NAT Apply</h4>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group">
+                            <label>Protocol</label>
+                            <select class="form-control protocol-select">
+                                <option>TCP</option>
+                                <option>UDP</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Host Port:</label>
+                            <select class="form-control port-select"></select>
+                        </div>
+                        <div class="form-group">
+                            <label for="vm-port" class="control-label">VM Port:</label>
+                            <input type="number" class="form-control vm-port" id="vm-port" placeholder="1~65535">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" onclick=applyNat()>确定</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,20 @@
+.page-image {
+	padding: 0px;
+	margin-top: 100px;
+	margin-left: 60px;
+	max-width: 100%;
+}
+
+label.error {
+	font-size: 12px;
+	font-weight: inherit;
+	color: red;
+}
+
+.hide {
+	display: none;
+}
+
+.state-td {
+    width: 200px;
+}

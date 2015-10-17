@@ -1,0 +1,9 @@
+#audit-data-table tbody {
+	cursor: pointer;
+}
+
+#create-applications, #delete-applications, #nat-applications, #historical-operations{
+    padding: 10px;
+    border: 1px solid #46b8da;
+    border-radius: 5px;
+}

@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+
+{% block title %}
+Virtual Machine Status
+{% endblock %}
+
+{% block custom_css %}
+	<link rel="stylesheet" href="/css/detail.css">
+{% endblock %}
+
+{% block custom_js %}
+    <script src="/js/detail.js"></script>
+{% endblock %}
+
+{% block container %}
+	<!-- 文档容器 -->
+	<div class="container">
+		<div class="row">
+			<div class="col-md-8 col-md-offset-2">
+				<!-- 页面刷新按钮组 -->
+				<div id="refresh-button-group" class="btn-group btn-group-sm">
+					<!-- 刷新按钮 -->
+					<button id="refresh-button" type="button" class="btn btn-success">
+						<span class="glyphicon glyphicon-refresh" aria-hidden="true"></span>
+						&nbsp;Update Data
+					</button>
+					<div class="btn-group btn-group-sm">
+						<!-- 自动刷新选项按钮 -->
+						<button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+							Auto Update	
+							<span class="caret"></span>
+							<span class="sr-only">Toggle Dropdown</span>
+						</button>
+						<!-- 自动刷新选项菜单 -->
+						<ul id="refresh-option-menu" class="dropdown-menu" role="menu">
+							<li role="presentation" class="dropdown-header">Auto Refresh Option</li>
+							<!-- serRefreshOption(interval, index) -->
+							<!-- interval: seconds per refresh, index: dom index of menu item -->
+							<li><a href="javascript:setRefreshOption(0, 0);">
+								<span class="glyphicon glyphicon-check" aria-hidden="true"></span>
+								&nbsp;none
+							</a></li>
+							<li><a href="javascript:setRefreshOption(10, 1);">
+								<span class="glyphicon glyphicon-unchecked" aria-hidden="true"></span>
+								&nbsp;10 secs
+							</a></li>
+							<li><a href="javascript:setRefreshOption(30, 2);">
+								<span class="glyphicon glyphicon-unchecked" aria-hidden="true"></span>
+								&nbsp;30 secs
+							</a></li>
+							<li><a href="javascript:setRefreshOption(60, 3);">
+								<span class="glyphicon glyphicon-unchecked" aria-hidden="true"></span>
+								&nbsp;1 min
+							</a></li>
+							<li><a href="javascript:setRefreshOption(300, 4);">
+								<span class="glyphicon glyphicon-unchecked" aria-hidden="true"></span>
+								&nbsp;5 mins
+							</a></li>
+							<li><a href="javascript:setRefreshOption(600, 5);">
+								<span class="glyphicon glyphicon-unchecked" aria-hidden="true"></span>
+								&nbsp;10 mins
+							</a></li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- 基本信息表格 -->
+		<div class="row">
+			<div class="col-md-8 col-md-offset-2">
+				<table id="basic-info-table" class="detail-table table table-striped table-bordered table-hover">
+					<thead><tr><th colspan="2">Basic Infomation</th></tr></thead>
+					<tbody>
+						<tr><td>Operation System</td><td id="td-os"></td></tr>
+						<tr><td>CPU Infomation</td><td id="td-cpu-info"></td></tr>
+						<tr><td>Memory</td><td id="td-total-mem"></td></tr>
+						<tr><td>Swap Memory</td><td id="td-total-swap"></td></tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+
+		<!-- 当前状态表格 -->
+		<div class="row">
+			<div class="col-md-8 col-md-offset-2">
+				<table id="current-status-table" class="detail-table table table-striped table-bordered table-hover">
+					<thead><tr><th colspan="2">Current Status</th></tr></thead>
+					<tbody>
+						<tr><td>CPU Load(%)</td><td id="td-cpu-load"></td></tr>
+						<tr><td>Memory(kib)</td><td id="td-mem-load"></td></tr>
+						<tr><td>Swap(kib)</td><td id="td-swap-load"></td></tr>
+						<tr><td>Task Infomation</td><td id="td-task-info"></td></tr>
+						<tr><td>Current User</td><td id="td-user"></td></tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+
+		<!-- 网络信息表格 -->
+		<div class="row">
+			<div class="col-md-8 col-md-offset-2">
+				<table id="net-info-table" class="detail-table table table-striped table-bordered table-hover">
+					<thead><tr><th colspan="2">Net Infomation</th></tr></thead>
+					<tbody>
+						<tr><td>IPv4 Address</td><td id="td-ipv4"></td></tr>
+						<tr><td>IPv6 Address</td><td id="td-ipv6"></td></tr>
+						<tr><td>Broadcast Address</td><td id="td-broadcast"></td></tr>
+						<tr><td>Subnet Mask</td><td id="td-mask"></td></tr>
+						<tr><td>DNS Server</td><td id="td-dns"></td></tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+
+		<!-- 任务状态表格 -->
+		<div class="row">
+			<div class="col-md-8 col-md-offset-2">
+				<table id="task-status-table" class="display" cellspacing="0" width="100%">
+					<thead>
+						<tr><th id="title-th" colspan="5">Task Status</th></tr>
+						<tr id="head-tr">
+							<th>PID</th>
+							<th>USER</th>
+							<th>%CPU</th>
+							<th>%MEM</th>
+							<th>CMD</th>
+						</tr>
+					</thead>
+				</table>
+			</div>
+		</div>
+	</div>
+{% endblock %}
