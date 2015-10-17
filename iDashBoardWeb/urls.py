@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.conf.urls import include, url
 from django.contrib import admin
-from settings import CSS_DIR, JS_DIR, IMG_DIR, LIB_DIR
+from iDashBoardWeb.settings import CSS_DIR, JS_DIR, IMG_DIR, LIB_DIR
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
