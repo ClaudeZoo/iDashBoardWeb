@@ -1,6 +1,5 @@
 __author__ = 'Claude'
-from random import randint
-from django.utils import timezone
+import json
 from django.shortcuts import HttpResponse
 from django.shortcuts import HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
@@ -28,17 +27,37 @@ def create_vm(application_id):
     try:
         application = CreateApplication.objects.get(id=application_id)
         if host_list.count() > 0:
-            a = randint(0, host_list.count() - 1)
-            host = host_list[a]
-            request_dict = dict(request_id=application_id, request_type='new', request_userid=application.applicant.id)
-            response = communicate(request_dict, host.ip, host.vm_manager_port)
-            if response and response['request_response'] == 'received':
-                application.state = 'In line'
-                application.host = host
-            elif not response:
-                application.state = response['request_response']
+            i, max_length, max_index = 0, 0, 0
+            while i < host_list.count():
+                ports = json.loads(host_list[i].ports_info)
+                if len(ports["free"]) > max_length:
+                    max_index = i
+                    max_length = len(host_list[i].ports_info["free"])
+                i += 1
+            if max_length > 0:
+                host = host_list[max_index]
+                ports = json.loads(host.ports_info)
+                port = ports["free"][0]
+                ports["free"].remove(port)
+                ports["used"].append(port)
+                request_dict = dict(request_id=application_id, request_type='new', port=port,
+                                    request_userid=application.applicant.id)
+                response = communicate(request_dict, host.ip, host.vm_manager_port)
+                if response and response['request_response'] == 'received':
+                    application.state = 'In line'
+                    application.host = host
+                elif not response:
+                    ports["free"].append(port)
+                    ports["used"].remove(port)
+                    application.state = response['request_response']
+                host.ports_info = json.dumps(ports)
+                host.save()
+            else:
+                application.state = 'error'
+                application.error = 'Run of out port'
         else:
             application.state = 'error'
+            application.error = 'No host'
         application.save()
         return application
     except ObjectDoesNotExist:

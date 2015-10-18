@@ -199,7 +199,5 @@ class MachineInfo(models.Model):
             self.os_info = info["os"]
         if "process" in info:
             self.process = info["process"]
-        if "port" in info:
-            self.port = info["port"]
         if "Disk" in info:
             self.disk = info["Disk"]

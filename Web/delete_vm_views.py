@@ -1,4 +1,5 @@
 __author__ = 'Claude'
+import json
 from django.utils import timezone
 from django.shortcuts import HttpResponse
 from django.contrib.auth.decorators import login_required
@@ -34,6 +35,11 @@ def delete_vm(application_id):
         if response and response['request_response'] == 'received':
             application.state = 'In line'
             application.host = host
+            ports = json.loads(host.ports_info)
+            ports["free"].append(application.vm.info.ssh_port)
+            ports["used"].remove(application.vm.info.ssh_port)
+            host.ports_info = json.dumps(ports)
+            host.save()
         elif not response:
             application.state = response['request_response']
         application.review_time = timezone.now()
