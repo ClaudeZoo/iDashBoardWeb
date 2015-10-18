@@ -17,7 +17,7 @@ def update_info(request):
     elif 'IPAddress' in request.POST and request.POST['IPAddress']:
         ip = request.POST['IPAddress'].split('\n')[0]
         try:
-            host = Host.objects.get(info__wan_ip=ip)
+            host = Host.objects.get(ip=ip)
             info = host.info
         except ObjectDoesNotExist:
             return HttpResponse('error')
@@ -45,12 +45,12 @@ def hello_server(request):
             vm = VM.objects.get(uuid=uuid)
             vm.info.save()
         except ObjectDoesNotExist:
-            print e
+            print("ObjectDoesNotExist")
     elif 'IPAddress' in request.POST and request.POST['IPAddress'] and 'Port' in request.POST and request.POST['Port']:
         ip = request.POST['IPAddress'].split('\n')[0]
         port = request.POST['Port']
         try:
-            host = Host.objects.get(info__wan_ip=ip)
+            host = Host.objects.get(ip=ip)
             host.vm_manager_port = port
             host.save()
         except ObjectDoesNotExist:
