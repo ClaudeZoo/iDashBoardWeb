@@ -50,7 +50,7 @@ def execute_nat(application_id):
             nat_rules = json.loads(application.vm.nat_rules)
             rule = dict(host_port=application.host_port, guest_port=application.vm_port, protocol=application.protocol)
             nat_rules.append(json.dumps(rule))
-            application.vm.nat_rules = json.dump(nat_rules)
+            application.vm.nat_rules = json.dumps(nat_rules)
             application.vm.save()
         elif not response:
             application.state = response['request_result']

@@ -28,7 +28,7 @@ class VM(models.Model):
     os = models.CharField(max_length=20, null=True)
     memory = models.IntegerField(null=True)
     vm_type = models.CharField(max_length=10, null=True)
-    nat_rules = models.TextField(null=True)
+    nat_rules = models.TextField(null=True, default="[]")
 
     def vm_info(self):
         info_dict = dict(id=self.id, uuid=self.uuid, name=self.name, ip=self.info.wan_ip, ssh_port=self.info.ssh_port, 
