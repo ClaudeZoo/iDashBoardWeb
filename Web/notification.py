@@ -20,7 +20,7 @@ def handle_notification(request):
             create_application = CreateApplication.objects.get(id=request_id)
             create_application.state = request_result
             if request_result == 'success':
-                info = MachineInfo(last_connect_time=timezone.now(), wan_ip=create_application.host.ip,
+                info = MachineInfo(last_connect_time=timezone.now(), wan_ip=create_application.host.info.wan_ip,
                                    ssh_port=port, os_info=create_application.os)
                 info.save()
                 vm = VM(info=info, state='Offline', user=create_application.applicant, host=create_application.host,

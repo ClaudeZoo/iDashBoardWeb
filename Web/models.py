@@ -188,6 +188,7 @@ class MachineInfo(models.Model):
             self.swap = info["Swap"]
         if "inet4" in info:
             self.inet4 = info["inet4"]
+            self.lan_ip = info["inet4"]
         if "bcast" in info:
             self.broadcast = info["bcast"]
         if "mask" in info:
