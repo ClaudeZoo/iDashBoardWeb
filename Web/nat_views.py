@@ -53,7 +53,7 @@ def execute_nat(application_id):
             application.vm.nat_rules = json.dump(nat_rules)
             application.vm.save()
         elif not response:
-            application.state = response['request_response']
+            application.state = response['request_result']
             application.error = response['error_information']
         else:
             application.state = 'network_error'

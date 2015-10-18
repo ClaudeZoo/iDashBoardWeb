@@ -21,7 +21,7 @@ def handle_notification(request):
             create_application.state = request_result
             if request_result == 'success':
                 info = MachineInfo(last_connect_time=timezone.now(), wan_ip=create_application.host.ip,
-                                   ssh_port=port)
+                                   ssh_port=port, os_info=create_application.os)
                 info.save()
                 vm = VM(info=info, state='Offline', user=create_application.applicant, host=create_application.host,
                         uuid=request.POST.get('vm_uuid', ''), name=request.POST.get('vm_name', ''), os=create_application.os,
@@ -30,18 +30,6 @@ def handle_notification(request):
             else:
                 create_application.error = request.POST.get('error_information', '')
             create_application.save()
-            return HttpResponse('hehe')
-        except ObjectDoesNotExist:
-            return HttpResponse('')
-    elif request_type == 'delete':
-        try:
-            delete_application = DeleteApplication.objects.get(id=request_id)
-            delete_application.state = request_result
-            if request_result == 'success':
-                delete_application.vm.state = 'deleted'
-                delete_application.vm.save()
-            else:
-                delete_application.error = request.POST.get('error_information')
             return HttpResponse('hehe')
         except ObjectDoesNotExist:
             return HttpResponse('')

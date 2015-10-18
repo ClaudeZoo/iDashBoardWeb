@@ -32,8 +32,8 @@ def delete_vm(application_id):
         request_dict = dict(request_id=application_id, request_type='delete', request_userid=application.applicant.id,
                             vm_name=application.vm.name, vm_uuid=application.vm.uuid)
         response = communicate(request_dict, host.ip, host.vm_manager_port)
-        if response and response['request_response'] == 'received':
-            application.state = 'In line'
+        if response and response['request_result'] == 'success':
+            application.state = 'success'
             application.host = host
             ports = json.loads(host.ports_info)
             ports["free"].append(application.vm.info.ssh_port)
@@ -41,7 +41,8 @@ def delete_vm(application_id):
             host.ports_info = json.dumps(ports)
             host.save()
         elif not response:
-            application.state = response['request_response']
+            application.state = response['request_result']
+            application.error = response['error_information']
         application.review_time = timezone.now()
         application.save()
         return application
