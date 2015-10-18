@@ -17,7 +17,7 @@ def update_info(request):
     elif 'IPAddress' in request.POST and request.POST['IPAddress']:
         ip = request.POST['IPAddress'].split('\n')[0]
         try:
-            host = Host.objects.get(ip=ip)
+            host = Host.objects.get(info__wan_ip=ip)
             info = host.info
         except ObjectDoesNotExist:
             return HttpResponse('error')
@@ -28,7 +28,7 @@ def update_info(request):
         info.update_info(state_info)
         info.save()
     t = datetime.datetime.now()
-    s = Session.objects.filter(expire_date__gte = t)
+    s = Session.objects.filter(expire_date__gte=t)
     response = HttpResponse()
     if len(s) != 0:
         response["content"] = "someone"
@@ -50,7 +50,7 @@ def hello_server(request):
         ip = request.POST['IPAddress'].split('\n')[0]
         port = request.POST['Port']
         try:
-            host = VM.objects.get(ip=ip)
+            host = Host.objects.get(info__wan_ip=ip)
             host.vm_manager_port = port
             host.save()
         except ObjectDoesNotExist:

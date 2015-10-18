@@ -85,7 +85,7 @@ def get_host_info_list():
             else:
                 disk_used = get_host1_disk_used(info.disk)
             memory = str(int(float(info.memory.split()[1].rstrip('k'))
-                             / float(info.memory.split()[0].rstrip('k')) * 100 + 0.5)) + '%'
+                         / float(info.memory.split()[0].rstrip('k')) * 100 + 0.5)) + '%'
             cpu = str(int(100 - float(info.percent_cpu.split()[3].split('%')[0]) + 0.5)) + '%'
         except Exception:
             disk_used = '0%'
@@ -93,9 +93,9 @@ def get_host_info_list():
             cpu = '0%'
         finally:
             if info.last_connect_time < t:
-                state = "offline"
+                state = "Offline"
             else:
-                state = 'online'
+                state = 'Online'
             info_dict = dict(state=state, ip=info.lan_ip, wan_ip=info.wan_ip, os=info.os_info[0:-8],
                              Disk=disk_used, Memory=memory, CPU=cpu, id=host.id)
             host_info_list.append(info_dict)
