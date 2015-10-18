@@ -26,6 +26,7 @@ urlpatterns = [
     url(r'^myVMs', 'Web.myvms_views.my_vms_view'),
     url(r'^applications/$', 'Web.application_views.applications_view'),
     url(r'^detail/\d+/$', 'Web.detail_views.detail_view'),
+    url(r'get-detail/(?P<vm_id>\d+)/$', 'Web.detail_views.get_detail'),
     url(r'^login/$', 'Web.views.user_login'),
     url(r'^logout/$', 'Web.views.user_logout'),
     url(r'^signup/$', 'Web.views.sign_up'),

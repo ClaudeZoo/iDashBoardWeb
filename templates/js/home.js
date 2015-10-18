@@ -60,7 +60,7 @@ $(document).ready(function() {
 		},
 		createdRow: function(row, data) {
 			// 为每一行赋予一个虚拟机id
-			$(row).attr('data-id', data.id);
+			$(row).attr('data-id', data.info_id);
 		},
 		rowCallback: function(row, data) {
 			// 修改占用率为进度条样式
@@ -153,7 +153,7 @@ $(document).ready(function() {
 		},
 		createdRow: function(row, data) {
 			// 为每一行赋予一个虚拟机id
-			$(row).attr('data-id', data.id);
+			$(row).attr('data-id', data.info_id);
 		},
 		rowCallback: function(row, data) {
 			// 修改占用率为进度条样式

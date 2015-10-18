@@ -52,7 +52,7 @@ def get_vm_info_list():
             else:
                 state = 'online'
             info_dict = dict(state=state, ip=info.lan_ip, wan_ip=info.wan_ip, port=info.ssh_port,
-                             os=info.os_info[0:-8], vm_name=vm.name, Disk=disk_used,
+                             os=info.os_info[0:-8], vm_name=vm.name, Disk=disk_used, info_id=info.id,
                              Memory=memory, CPU=cpu, id=vm.id)
             vm_info_list.append(info_dict)
     return vm_info_list
@@ -97,7 +97,7 @@ def get_host_info_list():
             else:
                 state = 'Online'
             info_dict = dict(state=state, ip=info.lan_ip, wan_ip=info.wan_ip, os=info.os_info[0:-8],
-                             Disk=disk_used, Memory=memory, CPU=cpu, id=host.id)
+                             Disk=disk_used, Memory=memory, CPU=cpu, id=host.id, info_id=info.id,)
             host_info_list.append(info_dict)
     return host_info_list
 
