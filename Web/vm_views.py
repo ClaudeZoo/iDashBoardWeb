@@ -75,7 +75,7 @@ def get_disk_used(disk_info):
 def get_host_info_list():
     t = datetime.datetime.now()
     t -= datetime.timedelta(seconds=60)
-    hosts = Host.objects.all()
+    hosts = Host.objects.filter(state="Online")
     host_info_list = []
     for host in hosts:
         info = host.info
