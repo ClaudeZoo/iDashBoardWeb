@@ -106,11 +106,12 @@ def get_host1_disk_used(disk_info):
     disk_list = disk_info.split()
     used = 0
     size = 0
-    if (len(disk_list) - 9) % 6 == 0:
-        disk_number = (len(disk_list) - 9) / 6
+    if (len(disk_list) - 6) % 6 == 0:
+        disk_number = (len(disk_list) - 6) / 6
         for index in range(1, disk_number+1):
             size_info = disk_list[index*6 + 4]
             size = calculate_size(size_info, size)
+            print(size)
             used_info = disk_list[index*6 + 5]
             used = calculate_size(used_info, used)
     return str(int(100 * used / size + 0.5)) + '%'
