@@ -23,7 +23,7 @@ def apply_new_vm(request):
 
 
 def create_vm(application_id):
-    host_list = Host.objects.all()
+    host_list = Host.objects.filter(state='Online')
     try:
         application = CreateApplication.objects.get(id=application_id)
         if host_list.count() > 0:
@@ -32,7 +32,7 @@ def create_vm(application_id):
                 ports = json.loads(host_list[i].ports_info)
                 if len(ports["free"]) > max_length:
                     max_index = i
-                    max_length = len(host_list[i].ports_info["free"])
+                    max_length = len(ports["free"])
                 i += 1
             if max_length > 0:
                 host = host_list[max_index]
