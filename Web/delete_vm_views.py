@@ -29,7 +29,7 @@ def delete_vm(application_id):
     try:
         application = DeleteApplication.objects.get(id=application_id)
         host = application.vm.host
-        request_dict = dict(request_id=application_id, request_type='delete', request_userid=application.applicant.id,
+        request_dict = dict(request_id=application.id, request_type='delete', request_userid=application.applicant.id,
                             vm_name=application.vm.name, vm_uuid=application.vm.uuid)
         response = communicate(request_dict, host.ip, host.vm_manager_port)
         if response and response['request_result'] == 'success':
@@ -37,11 +37,9 @@ def delete_vm(application_id):
             application.host = host
             ports = json.loads(host.ports_info)
             nat_rules = json.loads(application.vm.nat_rules)
-            print(nat_rules)
             for rule in nat_rules:
                 ports["free"].append(rule["host_port"])
                 ports["used"].remove(rule["host_port"])
-                print("I am OK")
             ports["free"].append(application.vm.info.ssh_port)
             ports["used"].remove(application.vm.info.ssh_port)
             host.ports_info = json.dumps(ports)
