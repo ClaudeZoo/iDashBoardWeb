@@ -37,9 +37,11 @@ def delete_vm(application_id):
             application.host = host
             ports = json.loads(host.ports_info)
             nat_rules = json.loads(application.vm.nat_rules)
+            print(nat_rules)
             for rule in nat_rules:
                 ports["free"].append(rule["host_port"])
                 ports["used"].remove(rule["host_port"])
+                print("I am OK")
             ports["free"].append(application.vm.info.ssh_port)
             ports["used"].remove(application.vm.info.ssh_port)
             host.ports_info = json.dumps(ports)

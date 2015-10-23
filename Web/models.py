@@ -66,9 +66,13 @@ class CreateApplication(models.Model):
             vm_name = self.vm.name
         else:
             vm_name = "None"
+        if self.reviewer:
+            reviewer = self.reviewer.username
+        else:
+            reviewer = ""
         info_dict = dict(id=self.id, submission_time=self.submission_time, review_time=self.review_time,
                          vm_type=self.vm_type, os=self.os, memory=self.memory, state=self.state, error=self.error,
-                         vm_name=vm_name, reviewer=self.reviewer.username)
+                         vm_name=vm_name, reviewer=reviewer)
         return info_dict
 
 
@@ -91,8 +95,12 @@ class DeleteApplication(models.Model):
         return info_dict
 
     def application_info(self):
+        if self.reviewer:
+            reviewer = self.reviewer.username
+        else:
+            reviewer = ""
         info_dict = dict(id=self.id, submission_time=self.submission_time, review_time=self.review_time,
-                         state=self.state, error=self.error, vm_name=self.vm.name, reviewer=self.reviewer.username,
+                         state=self.state, error=self.error, vm_name=self.vm.name, reviewer=reviewer,
                          host_ip=self.host.info.wan_ip)
         return info_dict
 
@@ -120,10 +128,13 @@ class PortApplication(models.Model):
         return info_dict
 
     def application_info(self):
+        if self.reviewer:
+            reviewer = self.reviewer.username
+        else:
+            reviewer = ""
         info_dict = dict(id=self.id, submission_time=self.submission_time, review_time=self.review_time,
-                         protocol=self.protocol, vm_port=self.vm_port, host_port=self.host_port,
-                         host_ip=self.host.info.wan_ip, state=self.state, error=self.error, vm_name=self.vm.name,
-                         reviewer=self.reviewer.username)
+                         protocol=self.protocol, vm_port=self.vm_port, host_port=self.host_port, reviewer=reviewer,
+                         host_ip=self.host.info.wan_ip, state=self.state, error=self.error, vm_name=self.vm.name)
         return info_dict
 
 
