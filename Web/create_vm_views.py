@@ -41,7 +41,7 @@ def create_vm(application_id):
                 ports["free"].remove(port)
                 ports["used"].append(port)
                 request_dict = dict(request_id=application_id, request_type='new', port=port,
-                                    request_userid=application.applicant.id)
+                                    request_userid=application.applicant.id, request_memory=application.memory)
                 response = communicate(request_dict, host.ip, host.vm_manager_port)
                 if response and response['request_response'] == 'received':
                     application.state = 'In line'
