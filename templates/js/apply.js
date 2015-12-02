@@ -1,7 +1,12 @@
 /**
  * Created by wcx on 15/5/4.
  */
+
+
 $(document).ready(function () {
+	user_validate();
+});
+function user_validate(){
 	$('#apply-form').validate({
 		rules: {
 			password: {
@@ -14,4 +19,8 @@ $(document).ready(function () {
 			}
 		}
 	});
-});
+}
+function form_submit(){
+	document.getElementById('apply-form').submit();
+	return true;
+}

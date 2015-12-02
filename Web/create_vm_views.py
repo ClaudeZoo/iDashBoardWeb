@@ -1,12 +1,14 @@
 __author__ = 'Claude'
 import json
 from django.shortcuts import HttpResponse
+from django.shortcuts import render_to_response
 from django.shortcuts import HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist
 from Web.models import Host
 from Web.models import CreateApplication
 from Web.communication import communicate
+from Web.views import is_admin
 
 
 @login_required
@@ -16,8 +18,10 @@ def apply_new_vm(request):
         memory = int(request.POST.get('memory', ''))
         vm_type = request.POST.get('vm_type', '')
         application = CreateApplication(applicant=request.user, vm_type=vm_type, os=os, memory=memory, state='pending')
+        is_administer = is_admin(request.user)
+        has_applied = 1
         application.save()
-        return HttpResponseRedirect('/apply/')
+        return render_to_response('apply.html', locals())
     else:
         return HttpResponseRedirect('/apply/')
 

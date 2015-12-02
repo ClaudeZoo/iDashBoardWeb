@@ -64,13 +64,48 @@
                         <p>为了您的隐私安全，申请成功后，<Strong style="color: red">请尽快修改密码！</Strong></p>
                     </div>
                     <br />
-                    <button type="submit" class="col-sm-4 btn btn-primary pull-right">Apply</button>
                 </form>
+                <a onclick="form_submit()" class="col-sm-4 btn btn-primary pull-right">Apply</a>
             </div>
             <div class="col-sm-5">
 				<img class="page-image" src="/img/cloudcomputing.jpg">
 			</div>
         </div>
     </div>
+    <!--
+    模态框代码
+    -->
+    <div class="modal fade" id="applymodal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">申请信息</h4>
+                </div>
+                <div class="modal-body">
+                    新建虚拟机的申请已经提交至管理员，请等待管理员审核。
+                </div>
+                <div class="modal-footer">
+                    <a href="" class="btn btn-default">继续申请</a>
+                    <a href="/../home/" class="btn btn-default">返回我的主页</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        var hasApplied = 0;
+        {% if has_applied %}
+            hasApplied = {{ has_applied }}
+        {% endif %}
+        if(hasApplied == 1){
+           $(function () {
+               $('#applymodal').modal({
+                keyboard: false
+               })
+           });
+        }
+
+
+    </script>
 
 {% endblock %}
