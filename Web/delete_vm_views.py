@@ -33,6 +33,7 @@ def delete_vm(application_id):
                             vm_name=application.vm.name, vm_uuid=application.vm.uuid)
         response = communicate(request_dict, host.ip, host.vm_manager_port)
         if response and response['request_result'] == 'success':
+            print(response)
             application.state = 'success'
             application.vm.state = 'deleted'
             application.vm.save()
@@ -46,6 +47,7 @@ def delete_vm(application_id):
             host.ports_info = json.dumps(ports)
             host.save()
         elif response:
+            print(response)
             application.state = response['request_result']
             application.error = response['error_information']
         application.save()

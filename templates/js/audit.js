@@ -40,7 +40,8 @@ $(document).ready(function(){
             });
     });
     $("#create-applications-table .refuse-button").bind("click", function(){
-       var application_id = $(this).parents("td").siblings(".application-id").text();
+        $(this).addClass("disabled");
+        var application_id = $(this).parents("td").siblings(".application-id").text();
         var id_selector = "#application-" + application_id;
         $.post("/refuse_single_creation/", { id: application_id})
             .done(function(){
@@ -53,6 +54,7 @@ $(document).ready(function(){
             });
     });
     $("#delete-applications-table .approve-button").bind("click", function(){
+        $(this).addClass("disabled");
         var application_id = $(this).parents("td").siblings(".application-id").text();
         var id_selector = "#application-" + application_id;
         $.post("/approve_single_delete/", { id: application_id})
@@ -66,7 +68,7 @@ $(document).ready(function(){
             });
     });
     $("#delete-applications-table .refuse-button").bind("click", function(){
-       var application_id = $(this).parents("td").siblings(".application-id").text();
+        var application_id = $(this).parents("td").siblings(".application-id").text();
         var id_selector = "#application-" + application_id;
         $.post("/refuse_single_delete/", { id: application_id})
             .done(function(){
@@ -79,6 +81,7 @@ $(document).ready(function(){
             });
     });
     $("#nat-applications-table .approve-button").bind("click", function(){
+        $(this).addClass("disabled");
         var application_id = $(this).parents("td").siblings(".application-id").text();
         var id_selector = "#application-" + application_id;
         $.post("/approve_single_nat/", { id: application_id})
@@ -92,7 +95,7 @@ $(document).ready(function(){
             });
     });
     $("#nat-applications-table .refuse-button").bind("click", function(){
-       var application_id = $(this).parents("td").siblings(".application-id").text();
+        var application_id = $(this).parents("td").siblings(".application-id").text();
         var id_selector = "#application-" + application_id;
         $.post("/refuse_single_nat/", { id: application_id})
             .done(function(){
