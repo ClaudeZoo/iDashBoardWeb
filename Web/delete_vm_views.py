@@ -34,6 +34,8 @@ def delete_vm(application_id):
         response = communicate(request_dict, host.ip, host.vm_manager_port)
         if response and response['request_result'] == 'success':
             application.state = 'success'
+            application.vm.state = 'deleted'
+            application.vm.save()
             ports = json.loads(host.ports_info)
             nat_rules = json.loads(application.vm.nat_rules)
             for rule in nat_rules:
