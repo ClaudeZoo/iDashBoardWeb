@@ -1,5 +1,8 @@
 
 $(document).ready(function(){
+    $(function () { $(".tooltip-options").tooltip({html : true });});
+
+
     $("#myVMs-data-table").DataTable();
     $("tbody tr").each(function(){
         var start_button = $(this).find(".start-button");
