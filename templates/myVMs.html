@@ -45,9 +45,18 @@ My Virtual Machines
                             <td>{{ vm.ip }} : {{ vm.ssh_port }}</td>
                             <td class="state-td">
                                 <i class="fa"> {{ vm.state }}</i>
-                                <div class="progress hiding">
-                                    <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
-                                        <span class="sr-only">60%</span>
+                                <div id="{{ vm.uuid }}-progress-div" class="progress progress-striped">
+                                    <div id="{{ vm.uuid }}-start-progress-1" class="progress-bar progress-bar-success active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%">
+                                        <span class="sr-only">0%</span>
+                                    </div>
+                                    <div id="{{ vm.uuid }}-start-progress-2" class="progress-bar progress-bar-danger active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%">
+                                        <span class="sr-only">0%</span>
+                                    </div>
+                                    <div id="{{ vm.uuid }}-start-progress-3" class="progress-bar progress-bar-info active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%">
+                                        <span class="sr-only">0%</span>
+                                    </div>
+                                    <div id="{{ vm.uuid }}-start-progress-4" class="progress-bar progress-bar-warning active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%">
+                                        <span class="sr-only">0%</span>
                                     </div>
                                 </div>
                             </td>
