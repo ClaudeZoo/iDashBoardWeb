@@ -29,28 +29,34 @@ My Virtual Machines
                             <th class="hiding">VM UUID</th>
                             <th class="hiding">VM Host</th>
                             <th>IP : Port (For SSH)</th>
-                            <th>VM Type</th>
-                            <th>OS</th>
-                            <th>Memory</th>
                             <th>State</th>
                             <th>Manage</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for vm in vms %}
-                        <tr>
-                            <td class="vm-name">{{ vm.name }}</td>
+                        <tr class="tooltip-options"  data-placement="top" data-toggle="tooltip" title=
+                                "<p>VM Type:{{ vm.vm_type}}</p>
+                                 <p>OS:{{ vm.os }}</p>
+                                 <p>Memory:{{ vm.memory }}</p>">
+                            <td>{{ vm.name }}</td>
                             <td class="hiding vm-uuid">{{ vm.uuid }}</td>
                             <td class="hiding host-id">{{ vm.host }}</td>
                             <td>{{ vm.ip }} : {{ vm.ssh_port }}</td>
-                            <td>{{ vm.vm_type}}</td>
-                            <td>{{ vm.os }}</td>
-                            <td>{{ vm.memory }}</td>
                             <td class="state-td">
                                 <i class="fa"> {{ vm.state }}</i>
-                                <div class="progress hiding">
-                                    <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 60%">
-                                        <span class="sr-only">60%</span>
+                                <div id="{{ vm.uuid }}-progress-div" class="progress progress-striped">
+                                    <div id="{{ vm.uuid }}-start-progress-1" class="progress-bar progress-bar-success active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%">
+                                        <span class="sr-only">0%</span>
+                                    </div>
+                                    <div id="{{ vm.uuid }}-start-progress-2" class="progress-bar progress-bar-danger active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%">
+                                        <span class="sr-only">0%</span>
+                                    </div>
+                                    <div id="{{ vm.uuid }}-start-progress-3" class="progress-bar progress-bar-info active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%">
+                                        <span class="sr-only">0%</span>
+                                    </div>
+                                    <div id="{{ vm.uuid }}-start-progress-4" class="progress-bar progress-bar-warning active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%">
+                                        <span class="sr-only">0%</span>
                                     </div>
                                 </div>
                             </td>
