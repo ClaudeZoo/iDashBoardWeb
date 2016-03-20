@@ -131,7 +131,6 @@ function updateProcess(vm_name, vm_uuid, vm_state, hibernate_button, shutdown_bu
                     var next_process;
                     var current_state_process =  $("#"+ vm_uuid + "-start-progress-" + current_state_number).width()/total_width*100;
                     if(response_json.next_state == 0){
-
                         next_process = current_state_process + response_json.request_process;
                         next_state_number = current_state_number;
                         //如果iDashboard返回的process是原始百分比而不是增量，那么
@@ -149,7 +148,6 @@ function updateProcess(vm_name, vm_uuid, vm_state, hibernate_button, shutdown_bu
                         vm_state.html(state_string(next_state_number));
                     }
                     $("#"+ vm_uuid + "-start-progress-" + next_state_number).css("width", next_process+'%');
-
                 }
             });
         }

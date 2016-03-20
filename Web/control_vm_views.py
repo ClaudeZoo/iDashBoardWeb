@@ -1,4 +1,3 @@
-__author__ = 'Claude'
 import json
 from django.shortcuts import HttpResponse
 from django.contrib.auth.decorators import login_required
@@ -46,6 +45,8 @@ def start_vm(request):
         request_dict = dict(request_id=operation.id, request_type=request_type, request_userid=request.user.id,
                             vm_name=vm.name, vm_uuid=vm.uuid)
         response = communicate(request_dict, host.ip, host.vm_manager_port)
+        monitor_req_dict = dict(vm_uuid=vm.uuid, type='start')
+        #communicate(monitor_req_dict, host.ip, 8777)
         if response and response['request_result'] == 'success':
             return HttpResponse(json.dumps(dict(request_result='success', request_process=10, next_state=1)))
         elif response:
@@ -85,3 +86,4 @@ def start_end_vm(request):
         operation.result = response['network_error']
     operation.save()
     return HttpResponse(json.dumps(dict(request_result=operation.result, error_information=operation.information)))
+

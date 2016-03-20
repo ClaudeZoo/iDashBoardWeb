@@ -56,6 +56,7 @@ urlpatterns = [
     url(r'^refuse_single_creation/$', 'Web.audit_views.refuse_single_creation'),
     url(r'^refuse_single_delete/$', 'Web.audit_views.refuse_single_delete'),
     url(r'^free_ports', 'Web.nat_views.get_free_ports'),
+    url(r'^iamonline', 'Web.monitor.online'),
     url(r'^css/(?P<path>.*)', 'django.views.static.serve', {'document_root': CSS_DIR}),
     url(r'^js/(?P<path>.*)', 'django.views.static.serve', {'document_root': JS_DIR}),
     url(r'^img/(?P<path>.*)', 'django.views.static.serve', {'document_root': IMG_DIR}),

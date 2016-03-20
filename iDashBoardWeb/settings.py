@@ -62,9 +62,9 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'iDashBoard',
         'USER': 'root',
-        'PASSWORD': 'thss2014zy',
-        'HOST': '58.205.208.70',
-        'PORT': '8779'
+        'PASSWORD': 'wuzher1||',
+        'HOST': '127.0.0.1',
+        'PORT': 3306
     }
 }
 
