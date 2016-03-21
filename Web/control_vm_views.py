@@ -46,7 +46,7 @@ def start_vm(request):
                             vm_name=vm.name, vm_uuid=vm.uuid)
         response = communicate(request_dict, host.ip, host.vm_manager_port)
         monitor_req_dict = dict(vm_uuid=vm.uuid, type='start')
-        #communicate(monitor_req_dict, host.ip, 8777)
+        communicate(monitor_req_dict, host.ip, 8777)
         if response and response['request_result'] == 'success':
             return HttpResponse(json.dumps(dict(request_result='success', request_process=10, next_state=1)))
         elif response:
