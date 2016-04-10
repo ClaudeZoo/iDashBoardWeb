@@ -36,7 +36,7 @@ $(document).ready(function(){
         start_button.addClass("disabled");
         delete_button.addClass("disabled");
         vm_state.removeClass("fa-times-circle fa-hdd-o").text("Offline")
-        var process_id = setInterval(update, 1000);//时间太短会有error，500时有一半error
+        var process_id = setInterval(update, 3000);//时间太短会有error，500时有一半error
         $('<div/>', { id: vm_uuid, class: "hiding"}).html(process_id).appendTo('body');
     });
     $(".shutdown-button").bind("click", function(){
@@ -121,53 +121,63 @@ function updateProcess(vm_name, vm_uuid, vm_state, hibernate_button, shutdown_bu
             + $("#"+ vm_uuid + "-start-progress-3").width() + $("#"+ vm_uuid + "-start-progress-4").width();
         var total_width = $('#'+vm_uuid+'-progress-div').width();
         var current_process = current_width/total_width*100;
-        if(current_process < 90){
+        if(current_process == 0){
             $.post('/start_vm/', {'uuid': vm_uuid, 'vm-name': vm_name, 'request_type': 'start',
-                'current_process':current_process}, function(response){
+            'current_process':current_process}, function(response){
                 var response_json = eval('(' + response + ')');
                 if(response_json.request_result === 'success'){
-                    var current_state_number = state_number(vm_state.text());
-                    var next_state_number;
-                    var next_process;
-                    var current_state_process =  $("#"+ vm_uuid + "-start-progress-" + current_state_number).width()/total_width*100;
-                    if(response_json.next_state == 0){
-                        next_process = current_state_process + response_json.request_process;
-                        next_state_number = current_state_number;
-                        //如果iDashboard返回的process是原始百分比而不是增量，那么
-                        //next_process=response_json.request_process－(current_process-current_state_process)
-                    }
-                    else{
-                        next_state_number = current_state_number + response_json.next_state;
-                        //如果iDashboard返回是原始百分比而不是增量，那么
-                        //next_process=response_json.request_process－current_process
-                        next_process = response_json.request_process
-                        if(next_state_number > 4){
-                            next_state_number = 4;
-                            next_process = current_state_process + response_json.request_process;
-                        }
-                        vm_state.html(state_string(next_state_number));
-                    }
-                    $("#"+ vm_uuid + "-start-progress-" + next_state_number).css("width", next_process+'%');
+                    vm_state.html(state_string(1));
+                    $("#"+ vm_uuid + "-start-progress-1").css("width", '1%');
+
                 }
             });
         }
         else{
-            $.post('/start_end_vm/', {'uuid': vm_uuid, 'vm-name': vm_name, 'request_type': 'start_end'}, function(response){
+            $.post('/powering_process_vm/', {'uuid': vm_uuid, 'vm-name': vm_name, 'process':current_process}, function(response){
                 var response_json = eval('(' + response + ')');
                 if (response_json.request_result === 'success'){
-                    hibernate_button.removeClass("disabled");
-                    shutdown_button.removeClass("disabled");
-                    //省略掉完成状态100%状态
-                    vm_state.removeClass("fa-spinner fa-pulse fa-2x").addClass("fa-check-circle").text(" Online");
-                    $("#" + vm_uuid + "-progress-div").hide();
-                    $("#"+ vm_uuid + "-start-progress-1").css("width", "0%");
-                    $("#"+ vm_uuid + "-start-progress-2").css("width", "0%");
-                    $("#"+ vm_uuid + "-start-progress-3").css("width", "0%");
-                    $("#"+ vm_uuid + "-start-progress-4").css("width", "0%");
-                    current_process = 100;
-                    process_id = $("#"+vm_uuid).text();
-                    $("#"+vm_uuid).remove();
-                    window.clearInterval(process_id);
+                    if(response_json.next_state == 5){
+                        hibernate_button.removeClass("disabled");
+                        shutdown_button.removeClass("disabled");
+                        //省略掉完成状态100%状态
+                        vm_state.removeClass("fa-spinner fa-pulse fa-2x").addClass("fa-check-circle").text(" Online");
+                        $("#" + vm_uuid + "-progress-div").hide();
+                        $("#"+ vm_uuid + "-start-progress-1").css("width", "0%");
+                        $("#"+ vm_uuid + "-start-progress-2").css("width", "0%");
+                        $("#"+ vm_uuid + "-start-progress-3").css("width", "0%");
+                        $("#"+ vm_uuid + "-start-progress-4").css("width", "0%");
+                        current_process = 100;
+                        process_id = $("#"+vm_uuid).text();
+                        $("#"+vm_uuid).remove();
+                        window.clearInterval(process_id);
+                    }
+                    else{
+                        console.log(response_json);
+                        var current_state_number = state_number(vm_state.text());
+                        var next_state_number;
+                        var next_process;
+                        var current_state_process =  $("#"+ vm_uuid + "-start-progress-" + current_state_number).width()/total_width*100;
+                        if(response_json.next_state == 0){
+                            //next_process = current_state_process + response_json.request_process;
+                            next_state_number = current_state_number;
+                            //如果iDashboard返回的process是原始百分比而不是增量，那么
+                            next_process=response_json.request_process - (current_process-current_state_process)
+                        }
+                        else{
+                            next_state_number = current_state_number + response_json.next_state;
+                            //如果iDashboard返回是原始百分比而不是增量，那么
+                            next_process=response_json.request_process-current_process
+                            //next_process = response_json.request_process
+                            if(next_state_number > 4){
+                                next_state_number = 4;
+                                next_process = current_state_process + response_json.request_process;
+                            }
+                            vm_state.html(state_string(next_state_number));
+                        }
+                        $("#"+ vm_uuid + "-start-progress-" + next_state_number).css("width", next_process+'%');
+                    }
+
+
                 }
             });
         }
@@ -177,16 +187,16 @@ function updateProcess(vm_name, vm_uuid, vm_state, hibernate_button, shutdown_bu
 
 function state_string(state_number){
     if(state_number == 1){
-        return "BIOS自检"
+        return "开机中"//"BIOS自检"
     }
     else if(state_number == 2){
-        return "磁盘驱动"
+        return "开机中"//"磁盘驱动"
     }
     else if(state_number == 3){
-        return "Linux内核解压"
+        return "开机中"//"Linux内核解压"
     }
     else if(state_number == 4){
-        return "驱动程序加载"
+        return "开机中"//"驱动程序加载"
     }
     else{
         return "Online"
@@ -209,5 +219,5 @@ function state_number(state) {
     else if(state == "驱动程序加载"){
         return 4;
     }
-    return 4;
+    return 1;
 }

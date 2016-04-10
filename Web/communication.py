@@ -8,6 +8,7 @@ def communicate(data, ip, port):
         sock.connect((ip, port))
         sock.send(str(data))
         response = sock.recv(1024)
+        sock.close()
         return eval(response)
     except:
         return None
