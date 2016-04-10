@@ -80,10 +80,10 @@ def get_host_info_list():
     for host in hosts:
         info = host.info
         try:
-            if host.ip == '10.0.0.121':
-                disk_used = get_host2_disk_used(info.disk)
-            else:
+            if host.ip == '10.0.0.120' or host.ip == '10.0.0.122':
                 disk_used = get_host1_disk_used(info.disk)
+            else:
+                disk_used = get_host2_disk_used(info.disk)
             memory = str(int(float(info.memory.split()[1].rstrip('k'))
                          / float(info.memory.split()[0].rstrip('k')) * 100 + 0.5)) + '%'
             cpu = str(int(100 - float(info.percent_cpu.split()[3].split('%')[0]) + 0.5)) + '%'
