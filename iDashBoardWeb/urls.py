@@ -41,7 +41,7 @@ urlpatterns = [
     url(r'^helloServer/$', 'Web.info_update.hello_server'),
     url(r'^saveVMState/$', 'Web.info_update.update_info'),
     url(r'^start_vm/$', 'Web.control_vm_views.start_vm'),
-    url(r'^start_end_vm/$', 'Web.control_vm_views.start_end_vm'),
+    url(r'^powering_process_vm/$', 'Web.control_vm_views.powering_process_vm'),
     url(r'^control_vm/$', 'Web.control_vm_views.control_vm'),
     url(r'^apply_new_vm/$', 'Web.create_vm_views.apply_new_vm'),
     url(r'^apply_nat/$', 'Web.nat_views.apply_nat'),
