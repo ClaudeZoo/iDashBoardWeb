@@ -67,6 +67,8 @@ def powering_process_vm(request):
     #else:
     #    return HttpResponse(json.dumps(dict(request_result='success', request_process=100, next_state=5)))
     vm = VM.objects.get(uuid=request.POST['uuid'])
+    if vm.state == 'Online':
+        return HttpResponse(json.dumps(dict(request_result='success', request_process=100, next_state=5)))
     if not OperationRecord.objects.filter(vm=vm).exists():
         return HttpResponse(json.dumps(dict(request_result='error', error_information='The VM hasn\'t start')))
     host = vm.host
@@ -74,7 +76,6 @@ def powering_process_vm(request):
     response = communicate(monitor_req_dict, host.ip, 8777)
     if response and response['result'] == 'success':
         result_process = float(response['process'])
-        print result_process
         next_state = 0
         if result_process >= 100 or current_process >= 100 or vm.state == 'Online':
             vm.state = 'Online'

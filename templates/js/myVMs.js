@@ -128,7 +128,6 @@ function updateProcess(vm_name, vm_uuid, vm_state, hibernate_button, shutdown_bu
                 if(response_json.request_result === 'success'){
                     vm_state.html(state_string(1));
                     $("#"+ vm_uuid + "-start-progress-1").css("width", '1%');
-
                 }
             });
         }
@@ -152,7 +151,6 @@ function updateProcess(vm_name, vm_uuid, vm_state, hibernate_button, shutdown_bu
                         window.clearInterval(process_id);
                     }
                     else{
-                        console.log(response_json);
                         var current_state_number = state_number(vm_state.text());
                         var next_state_number;
                         var next_process;
@@ -187,16 +185,16 @@ function updateProcess(vm_name, vm_uuid, vm_state, hibernate_button, shutdown_bu
 
 function state_string(state_number){
     if(state_number == 1){
-        return "开机中"//"BIOS自检"
+        return "开机中"; //"BIOS自检"
     }
     else if(state_number == 2){
-        return "开机中"//"磁盘驱动"
+        return "开机中"; //"磁盘驱动"
     }
     else if(state_number == 3){
-        return "开机中"//"Linux内核解压"
+        return "开机中"; //"Linux内核解压"
     }
     else if(state_number == 4){
-        return "开机中"//"驱动程序加载"
+        return "开机中"; //"驱动程序加载"
     }
     else{
         return "Online"
