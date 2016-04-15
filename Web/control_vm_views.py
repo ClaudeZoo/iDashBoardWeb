@@ -1,4 +1,3 @@
-__author__ = 'Claude'
 import json
 from django.shortcuts import HttpResponse
 from django.contrib.auth.decorators import login_required
@@ -46,8 +45,10 @@ def start_vm(request):
         request_dict = dict(request_id=operation.id, request_type=request_type, request_userid=request.user.id,
                             vm_name=vm.name, vm_uuid=vm.uuid)
         response = communicate(request_dict, host.ip, host.vm_manager_port)
+        monitor_req_dict = dict(vm_uuid=vm.uuid, type='start')
+        communicate(monitor_req_dict, host.ip, 8777)
         if response and response['request_result'] == 'success':
-            return HttpResponse(json.dumps(dict(request_result='success', request_process=10, next_state=1)))
+            return HttpResponse(json.dumps(dict(request_result='success')))
         elif response:
             operation.result = response['request_result']
             operation.information = response['error_information']
@@ -56,32 +57,37 @@ def start_vm(request):
         operation.save()
         return HttpResponse(json.dumps(dict(request_result=operation.result, error_information=operation.information)))
     else:
-        return HttpResponse(json.dumps(dict(request_result='success', request_process=10, next_state=1)))
+        return powering_process_vm(request)
 
 
-def start_end_vm(request):
-    request_type = request.POST['request_type']
+def powering_process_vm(request):
+    current_process = float(request.POST['process'])
+    #if current_process <= 90:
+    #   return HttpResponse(json.dumps(dict(request_result='success', request_process=current_process+10, next_state=0)))
+    #else:
+    #    return HttpResponse(json.dumps(dict(request_result='success', request_process=100, next_state=5)))
     vm = VM.objects.get(uuid=request.POST['uuid'])
+    if vm.state == 'Online':
+        return HttpResponse(json.dumps(dict(request_result='success', request_process=100, next_state=5)))
     if not OperationRecord.objects.filter(vm=vm).exists():
         return HttpResponse(json.dumps(dict(request_result='error', error_information='The VM hasn\'t start')))
-    operation = OperationRecord.objects.filter(vm=vm)[0]
     host = vm.host
-    request_dict = dict(request_id=operation.id, request_type=request_type, request_userid=request.user.id,
-                        vm_name=vm.name, vm_uuid=vm.uuid)
-    response = communicate(request_dict, host.ip, host.vm_manager_port)
-    if response and response['request_result'] == 'success':
-        operation.result = 'success'
-        if request_type == 'start_end':
+    monitor_req_dict = dict(vm_uuid=vm.uuid, type='query')
+    response = communicate(monitor_req_dict, host.ip, 8777)
+    if response and response['result'] == 'success':
+        result_process = float(response['process'])
+        next_state = 0
+        if result_process >= 100 or current_process >= 100 or vm.state == 'Online':
             vm.state = 'Online'
-        elif request_type == 'shutdown':
-            vm.state = 'Offline'
-        else:
-            vm.state = 'Hibernating'
-        vm.save()
+            vm.save()
+            result_process = 100
+            next_state = 5
+        elif int(current_process) > result_process or result_process <= 0:
+            result_process = int(current_process)
+        return HttpResponse(json.dumps(dict(request_result='success', request_process=result_process, next_state=next_state)))
     elif response:
-        operation.result = response['request_result']
-        operation.information = response['error_information']
+        result = response['result']
     else:
-        operation.result = response['network_error']
-    operation.save()
-    return HttpResponse(json.dumps(dict(request_result=operation.result, error_information=operation.information)))
+        result = 'Abortion connection'
+    return HttpResponse(json.dumps(dict(request_result=result)))
+
