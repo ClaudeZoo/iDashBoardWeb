@@ -15,6 +15,7 @@ class Host(models.Model):
     state = models.CharField(max_length=15, null=True)
     ip = models.CharField(max_length=20, null=True)
     vm_manager_port = models.IntegerField(null=True)
+    monitor_port = models.IntegerField(null=True)
     ports_info = models.TextField(null=True)
 
 
