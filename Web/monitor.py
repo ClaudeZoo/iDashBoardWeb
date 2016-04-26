@@ -9,6 +9,6 @@ def online(request):
         vm = VM.objects.get(uuid=uuid)
         vm.state = 'Online'
         vm.save()
-        request_dict = dict(vm_uuid=uuid, type='end')
+        request_dict = dict(request_id=0, vm_uuid=uuid, type='end')
         communicate(request_dict, vm.host.ip, vm.host.vm_manager_port)
     return HttpResponse("Ok")
