@@ -53,13 +53,14 @@ class CreateApplication(models.Model):
     error = models.TextField(null=True)
     vm = models.ForeignKey(VM, null=True)
     host = models.ForeignKey('Host', null=True)
+    reason = models.TextField(max_length=100, null=True)
 
     class Meta:
         ordering = ['-submission_time']
 
     def audit_info(self):
         info_dict = dict(id=self.id, applicant=self.applicant.username, submission_time=self.submission_time,
-                         vm_type=self.vm_type, os=self.os, memory=self.memory)
+                         vm_type=self.vm_type, os=self.os, memory=self.memory, reason=self.reason)
         return info_dict
 
     def application_info(self):
@@ -73,7 +74,7 @@ class CreateApplication(models.Model):
             reviewer = ""
         info_dict = dict(id=self.id, submission_time=self.submission_time, review_time=self.review_time,
                          vm_type=self.vm_type, os=self.os, memory=self.memory, state=self.state, error=self.error,
-                         vm_name=vm_name, reviewer=reviewer)
+                         vm_name=vm_name, reviewer=reviewer, reason=self.reason)
         return info_dict
 
 

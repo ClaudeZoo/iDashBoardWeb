@@ -1,85 +1,64 @@
 $(document).ready(function(){
     $(function () { $(".tooltip-options").tooltip({html : true });});
     $("div.progress").hide();
+    $(".state").hide();
     $("#myVMs-data-table").DataTable();
     $("tbody tr").each(function(){
-        var start_button = $(this).find(".start-button");
-        var shutdown_button = $(this).find(".shutdown-button");
-        var hibernate_button = $(this).find(".hibernate-button");
-        var delete_button = $(this).find(".delete-button");
-        if ($(this).find(".state-td i").text() == " Online"){
-            $(this).find(".state-td i").addClass("fa-check-circle");
-            start_button.addClass("disabled");
-            delete_button.addClass("disabled");
+        var items = findItems($(this));
+        if (items[2].text() == " Online"){
+            items[2].addClass("fa-check-circle");
+            items[4].addClass("disabled");
+            items[7].addClass("disabled");
         }
         else if ($(this).find(".state-td i").text() == " Offline"){
             $(this).find(".state-td i").addClass("fa-times-circle");
-            shutdown_button.addClass("disabled");
-            hibernate_button.addClass("disabled");
+            items[5].addClass("disabled");
+            items[6].addClass("disabled");
         }
         else {
             $(this).find(".state-td i").addClass("fa-hdd-o");
-            shutdown_button.addClass("disabled");
-            hibernate_button.addClass("disabled");
+            items[7].addClass("disabled");
+            items[6].addClass("disabled");
         }
     });
+
     $(".start-button").bind("click", function(){
-        var vm_name = $(this).parents("tr").children("td.vm-name").text();
-        var vm_uuid = $(this).parents("tr").children("td.vm-uuid").text();
-        $("#"+vm_uuid+"-progress-div").show();
-        var vm_state = $(this).parents("tr").find(".state-td i");
-        var start_button = $(this).parents("tr").find(".start-button");
-        var shutdown_button = $(this).parents("tr").find(".shutdown-button");
-        var hibernate_button = $(this).parents("tr").find(".hibernate-button");
-        var delete_button = $(this).parents("tr").find(".delete-button");
-        var update = updateProcess(vm_name, vm_uuid, vm_state, hibernate_button, shutdown_button);
-        start_button.addClass("disabled");
-        delete_button.addClass("disabled");
-        vm_state.removeClass("fa-times-circle fa-hdd-o").text("Offline")
-        var process_id = setInterval(update, 3000);//时间太短会有error，500时有一半error
-        $('<div/>', { id: vm_uuid, class: "hiding"}).html(process_id).appendTo('body');
+        var items = findItems($(this).parents("tr"));
+        items[4].addClass("disabled");
+        items[7].addClass("disabled");
+        items[2].removeClass("fa-times-circle fa-hdd-o").text("Waiting for response...");
+        var vm_name = items[0].text();
+        var uuid = items[1].text();
+        start_vm(vm_name, uuid, items);
     });
     $(".shutdown-button").bind("click", function(){
-        var vm_name = $(this).parents("tr").children("td.vm-name").text();
-        var vm_uuid = $(this).parents("tr").children("td.vm-uuid").text();
-        var vm_state = $(this).parents("tr").find(".state-td i")
-        var start_button = $(this).parents("tr").find(".start-button");
-        var shutdown_button = $(this).parents("tr").find(".shutdown-button");
-        var hibernate_button = $(this).parents("tr").find(".hibernate-button");
-        var delete_button = $(this).parents("tr").find(".delete-button");
-        hibernate_button.addClass("disabled");
-        shutdown_button.addClass("disabled");
-        vm_state.removeClass("fa-check-circle").addClass("fa-spinner fa-pulse fa-2x").text("")
-        $.post('/control_vm/', {'uuid': vm_uuid, 'vm-name': vm_name, 'request_type': 'shutdown'}, function(response){
+        var items = findItems($(this).parents("tr"));
+        items[5].addClass("disabled");
+        items[6].addClass("disabled");
+        items[2].removeClass("fa-check-circle").addClass("fa-spinner fa-pulse fa-2x").text("");
+        $.post('/control_vm/', {'uuid': items[1].text(), 'vm-name': items[0].text(), 'request_type': 'shutdown'}, function(response){
             var response_json = eval('(' + response + ')');
             if (response_json.request_result === 'success'){
-                start_button.removeClass("disabled");
-                delete_button.removeClass("disabled");
-                vm_state.removeClass("fa-spinner fa-pulse fa-2x").addClass("fa-times-circle").text(" Offline");
+                items[4].removeClass("disabled");
+                items[7].removeClass("disabled");
+                items[2].removeClass("fa-spinner fa-pulse fa-2x").addClass("fa-times-circle").text(" Offline");
             }
         }); 
     });
     $(".hibernate-button").bind("click", function(){
-        var vm_name = $(this).parents("tr").children("td.vm-name").text();
-        var vm_uuid = $(this).parents("tr").children("td.vm-uuid").text();
-        var vm_state = $(this).parents("tr").find(".state-td i")
-        var start_button = $(this).parents("tr").find(".start-button");
-        var shutdown_button = $(this).parents("tr").find(".shutdown-button");
-        var hibernate_button = $(this).parents("tr").find(".hibernate-button");
-        var delete_button = $(this).parents("tr").find(".delete-button");
-        hibernate_button.addClass("disabled");
-        shutdown_button.addClass("disabled");
-        vm_state.removeClass("fa-times-circle").addClass("fa-spinner fa-pulse fa-2x").text("")
-        $.post('/control_vm/', {'uuid': vm_uuid, 'vm-name': vm_name, 'request_type': 'savestate'}, function(response){
+        var items = findItems($(this).parents("tr"));
+        items[6].addClass("disabled");
+        items[5].addClass("disabled");
+        items[2].removeClass("fa-times-circle").addClass("fa-spinner fa-pulse fa-2x").text("");
+        $.post('/control_vm/', {'uuid': items[1].text(), 'vm-name': items[0].text(), 'request_type': 'savestate'}, function(response){
             var response_json = eval('(' + response + ')');
             if (response_json.request_result === 'success'){
-                start_button.removeClass("disabled");
-                delete_button.removeClass("disabled");
-                vm_state.removeClass("fa-spinner fa-pulse fa-2x").addClass("fa-hdd-o").text(" Hibernating");
+                item[4].removeClass("disabled");
+                item[7].removeClass("disabled");
+                item[2].removeClass("fa-spinner fa-pulse fa-2x").addClass("fa-hdd-o").text(" Hibernating");
             }
         }); 
     });
-
     $(".delete-button").bind("click", function(){
         var vm_uuid = $(this).parents("tr").children("td.vm-uuid").text();
         $("#deleteModal").attr("vm-uuid", vm_uuid);
@@ -100,6 +79,42 @@ $(document).ready(function(){
     });
 });
 
+
+function start_vm(vm_name, uuid, items){
+    $.post('/start_vm/', {'uuid': uuid, 'vm-name': vm_name, 'request_type': 'start'}, function(data){
+        var response_json = eval('(' + data + ')');
+        if (response_json.request_result === 'success'){
+            items[2].hide();
+            $("#"+ uuid + "-start-progress-1").width("0%");
+            $("#"+ uuid + "-start-progress-2").width("0%");
+            $("#"+ uuid + "-start-progress-3").width("0%");
+            items[9].text(" ");
+            items[10].text("0");
+            $("#"+uuid+"-progress-div").show();
+            $(".state").show();
+            var update = updateProcess(vm_name, uuid, items);
+            var process_id = setInterval(update, 50);
+            $('<div/>', { id: uuid, class: "hiding"}).html(process_id).appendTo('body');
+        }
+    });
+}
+
+
+function findItems(row){
+    var name = row.children("td.vm-name");
+    var uuid = row.children("td.vm-uuid");
+    var state = row.find(".state-td i");
+    var bar = $("#"+uuid.text()+"-progress-div");
+    var start_button = row.find(".start-button");
+    var shutdown_button = row.find(".shutdown-button");
+    var hibernate_button = row.find(".hibernate-button");
+    var delete_button = row.find(".delete-button");
+    var vm_state = row.find(".vm-state");
+    var vm_stage = row.find(".vm-stage");
+    var boot_time = row.find(".time");
+    return [name, uuid, state, bar, start_button, shutdown_button, hibernate_button, delete_button, vm_state, vm_stage, boot_time];
+}
+
 function applyNat(){
     var protocol = $(".protocol-select option:selected").text();
     var host_port = $(".port-select option:selected").text();
@@ -107,15 +122,65 @@ function applyNat(){
     $.post('/apply_nat/', {'uuid': $('#natModal').attr('vm-uuid'), 'protocol': protocol, 'host_port': host_port, 'vm_port': vm_port});
 }
 
-
 function confirmDelete(data_id){
     $.post('/delete_apply/', {'uuid': $('#deleteModal').attr('vm-uuid')}, function(data){
         }
     );
 }
 
-function updateProcess(vm_name, vm_uuid, vm_state, hibernate_button, shutdown_button){
+function updateProcess(vm_name, uuid, items){
     return function(){
+        $.post('/start_monitor/', {'uuid': uuid, 'vm-name': vm_name, 'request_type': 'query'}, function(response){
+            var response_json = eval('(' + response + ')');
+            if(response_json.result == 'success'){
+                var c = parseFloat(items[10].text());
+                c = (c + 0.05).toFixed(2);
+                items[10].text(c);
+                if (response_json.state == 'pre_kernel'){
+                    if (c < 3){
+                        $("#"+ uuid + "-start-progress-1").css("width", (c*4).toString() + "%");
+                        items[9].text("BIOS");
+                    }
+                    else{
+                        $("#"+ uuid + "-start-progress-2").css("width", ((c-3)*4).toString() + "%");
+                        items[9].text("Grub");
+                    }
+                }
+                else{
+                    items[9].text("Starting Kernel");
+                    items[8].text(response_json.info);
+                    var current_width = $("#"+ uuid + "-start-progress-1").width() + $("#"+ uuid + "-start-progress-2").width();
+                    var total_width = $('#'+uuid+'-progress-div').width();
+                    var remain = 98 - current_width/total_width*100;
+                    if (parseInt(response_json.rate) <= 348){
+                        var progress = parseInt(response_json.rate) / 384 * remain;
+                        $("#"+ uuid + "-start-progress-3").css("width", progress.toString() + "%");
+                    }
+                    else{
+                        $("#"+ uuid + "-start-progress-3").css("width", remain+"%");
+                    }
+                    //console.log(response_json.info)
+                }
+                return true;
+            }
+            else{
+                $(".state").hide();
+                $("#"+uuid+"-progress-div").hide();
+                items[2].show();
+                items[2].addClass("fa-check-circle").text(" Online");
+                items[4].addClass("disabled");
+                items[7].addClass("disabled");
+                items[5].removeClass("disabled");
+                items[6].removeClass("disabled");
+                var process_element = $("#"+uuid);
+                process_id = process_element.text();
+                process_element.remove();
+                window.clearInterval(process_id);
+                return false;
+            }
+
+        });
+        /*
         var process_id;
         var current_width = $("#"+ vm_uuid + "-start-progress-1").width() + $("#"+ vm_uuid + "-start-progress-2").width()
             + $("#"+ vm_uuid + "-start-progress-3").width() + $("#"+ vm_uuid + "-start-progress-4").width();
@@ -174,48 +239,9 @@ function updateProcess(vm_name, vm_uuid, vm_state, hibernate_button, shutdown_bu
                         }
                         $("#"+ vm_uuid + "-start-progress-" + next_state_number).css("width", next_process+'%');
                     }
-
-
                 }
             });
-        }
+        } */
     }
+};
 
-}
-
-function state_string(state_number){
-    if(state_number == 1){
-        return "开机中"; //"BIOS自检"
-    }
-    else if(state_number == 2){
-        return "开机中"; //"磁盘驱动"
-    }
-    else if(state_number == 3){
-        return "开机中"; //"Linux内核解压"
-    }
-    else if(state_number == 4){
-        return "开机中"; //"驱动程序加载"
-    }
-    else{
-        return "Online"
-    }
-}
-
-function state_number(state) {
-    if(state == "Offline"){
-        return 0;
-    }
-    else if(state == "BIOS自检"){
-        return 1;
-    }
-    else if(state == "磁盘驱动"){
-        return 2;
-    }
-    else if(state == "Linux内核解压"){
-        return 3;
-    }
-    else if(state == "驱动程序加载"){
-        return 4;
-    }
-    return 1;
-}

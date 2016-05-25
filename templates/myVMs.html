@@ -44,7 +44,7 @@ My Virtual Machines
                             <td class="hiding host-id">{{ vm.host }}</td>
                             <td>{{ vm.ip }} : {{ vm.ssh_port }}</td>
                             <td class="state-td">
-                                <i class="fa"> {{ vm.state }}</i>
+
                                 <div id="{{ vm.uuid }}-progress-div" class="progress progress-striped">
                                     <div id="{{ vm.uuid }}-start-progress-1" class="progress-bar progress-bar-success active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%">
                                         <span class="sr-only">0%</span>
@@ -59,6 +59,14 @@ My Virtual Machines
                                         <span class="sr-only">0%</span>
                                     </div>
                                 </div>
+                                <i class="fa"> {{ vm.state }}</i>
+                                <p class="state">
+                                    <div class="state" style="float:left;">Stage: <b class="vm-stage"></b></div>
+                                    <div class="state" style="float:right;">Time: <b class="time">0</b></div>
+                                </p>
+                                <p class="state">
+                                    <div class="state vm-state" style="float:left;"></div>
+                                </p>
                             </td>
                             <td>
                                 <div class="btn-group">
