@@ -135,15 +135,15 @@ function updateProcess(vm_name, uuid, items){
             var response_json = eval('(' + response + ')');
             if(response_json.result == 'success'){
                 var c = parseFloat(items[10].text());
-                c = (c + 0.1).toFixed(2);
+                c = (c + 0.1).toFixed(1);
                 items[10].text(c);
                 if (response_json.state == 'pre_kernel'){
                     if (c < 3){
-                        $("#"+ uuid + "-start-progress-1").css("width", (c*2).toString() + "%");
+                        $("#"+ uuid + "-start-progress-1").css("width", (c*4).toString() + "%");
                         items[9].text("BIOS");
                     }
                     else{
-                        $("#"+ uuid + "-start-progress-2").css("width", ((c-3)*2).toString() + "%");
+                        $("#"+ uuid + "-start-progress-2").css("width", ((c-3)*4).toString() + "%");
                         items[9].text("Grub");
                     }
                 }
