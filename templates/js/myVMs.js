@@ -91,9 +91,9 @@ function start_vm(vm_name, uuid, items){
             items[9].text(" ");
             items[10].text("0");
             $("#"+uuid+"-progress-div").show();
-            $(".state").show();
+            items[11].show();
             var update = updateProcess(vm_name, uuid, items);
-            var process_id = setInterval(update, 50);
+            var process_id = setInterval(update, 100);
             $('<div/>', { id: uuid, class: "hiding"}).html(process_id).appendTo('body');
         }
     });
@@ -112,7 +112,8 @@ function findItems(row){
     var vm_state = row.find(".vm-state");
     var vm_stage = row.find(".vm-stage");
     var boot_time = row.find(".time");
-    return [name, uuid, state, bar, start_button, shutdown_button, hibernate_button, delete_button, vm_state, vm_stage, boot_time];
+    var log = row.find(".state");
+    return [name, uuid, state, bar, start_button, shutdown_button, hibernate_button, delete_button, vm_state, vm_stage, boot_time, log];
 }
 
 function applyNat(){
@@ -134,15 +135,15 @@ function updateProcess(vm_name, uuid, items){
             var response_json = eval('(' + response + ')');
             if(response_json.result == 'success'){
                 var c = parseFloat(items[10].text());
-                c = (c + 0.05).toFixed(2);
+                c = (c + 0.1).toFixed(2);
                 items[10].text(c);
                 if (response_json.state == 'pre_kernel'){
                     if (c < 3){
-                        $("#"+ uuid + "-start-progress-1").css("width", (c*4).toString() + "%");
+                        $("#"+ uuid + "-start-progress-1").css("width", (c*2).toString() + "%");
                         items[9].text("BIOS");
                     }
                     else{
-                        $("#"+ uuid + "-start-progress-2").css("width", ((c-3)*4).toString() + "%");
+                        $("#"+ uuid + "-start-progress-2").css("width", ((c-3)*2).toString() + "%");
                         items[9].text("Grub");
                     }
                 }
@@ -164,7 +165,7 @@ function updateProcess(vm_name, uuid, items){
                 return true;
             }
             else{
-                $(".state").hide();
+                items[11].hide();
                 $("#"+uuid+"-progress-div").hide();
                 items[2].show();
                 items[2].addClass("fa-check-circle").text(" Online");
