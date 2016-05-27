@@ -154,7 +154,7 @@ function updateProcess(vm_name, uuid, items){
                     var total_width = $('#'+uuid+'-progress-div').width();
                     var remain = 98 - current_width/total_width*100;
                     if (parseInt(response_json.rate) <= 348){
-                        var progress = parseInt(response_json.rate) / 384 * remain;
+                        var progress = parseInt(response_json.rate) / 348 * remain;
                         $("#"+ uuid + "-start-progress-3").css("width", progress.toString() + "%");
                     }
                     else{
