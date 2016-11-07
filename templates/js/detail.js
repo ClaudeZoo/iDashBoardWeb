@@ -57,30 +57,30 @@ function refreshData() {
 		$('#td-cpu-info').text(data.cpuInfo);
 		$('#td-total-mem').text(data.memory.split(" ")[0]);
 		$('#td-total-swap').text(data.memory_swap.split(" ")[0]);
-        var cpu = ["系统：","用户：","空闲：","等待IO：","硬中断：","软中断：","实际："];
+        var cpu = ["us: ","sy: ","ni: ","id: ","wa: ","hi: ","si: ", "st: "];
         var strs = data.cpuLoad.split(" ");
-        var str = ""
+        var str = "";
         for (var i = 0; i < strs.length; i++){
             str += "<strong>"+cpu[i]+"</strong>" + strs[i] + "&emsp;";
         }
 		$('#td-cpu-load').html(str);
-        var mem = ["物理:","空闲:","内核:","内核缓存:"];
-        str = ""
+        var mem = ["total: ","used: ","free: ","buffers: "];
+        str = "";
         strs = data.memory.split(" ");
         for (var i = 0; i < strs.length; i++) {
             str += "<strong>" + mem[i] + "</strong>" + strs[i] + "&emsp;";
         }
 		$('#td-mem-load').html(str);
-        var swap = ["总交换区：","使用：","空闲：","缓冲："];
-        str = ""
+        var swap = ["total: ","used: ","free: ","cached Mem: "];
+        str = "";
         strs = data.memory_swap.split(" ");
         for (var i = 0; i < strs.length; i++){
             str += "<strong>"+swap[i]+"</strong>" + strs[i] + "&emsp;";
         }
 		$('#td-swap-load').html(str);
-        var task = ["运行：","睡眠：","停止：","僵尸："];
+        var task = ["total：","running：","sleeping：","stopped：", "zombie: "];
         str = ""
-        strs = data.memory.split(" ");
+        strs = data.tasks.split(" ");
         for (var i = 0; i < strs.length; i++){
             str += "<strong>"+task[i]+"</strong>" + strs[i] + "&emsp;";
         }
