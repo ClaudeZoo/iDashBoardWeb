@@ -88,7 +88,7 @@ function start_vm(vm_name, uuid, items){
             $("#"+ uuid + "-start-progress-1").width("0%");
             $("#"+ uuid + "-start-progress-2").width("0%");
             $("#"+ uuid + "-start-progress-3").width("0%");
-            items[9].text(" ");
+            items[8].text(" ");
             items[10].text("0");
             $("#"+uuid+"-progress-div").show();
             items[11].show();
@@ -152,9 +152,9 @@ function updateProcess(vm_name, uuid, items){
                     items[8].text(response_json.info);
                     var current_width = $("#"+ uuid + "-start-progress-1").width() + $("#"+ uuid + "-start-progress-2").width();
                     var total_width = $('#'+uuid+'-progress-div').width();
-                    var remain = 98 - current_width/total_width*100;
-                    if (parseInt(response_json.rate) <= 348){
-                        var progress = parseInt(response_json.rate) / 348 * remain;
+                    var remain = 99 - current_width/total_width*100;
+                    if (parseInt(response_json.rate) <= 430){
+                        var progress = parseInt(response_json.rate) / 430 * remain;
                         $("#"+ uuid + "-start-progress-3").css("width", progress.toString() + "%");
                     }
                     else{
