@@ -74,6 +74,7 @@
 				<!-- 左侧按钮 -->
 				<ui class="nav navbar-nav" style="margin-left: 100px;">
 					<li {% block main_active %}{% endblock %}><a href="/home/">Mainboard<span class="sr-only">(current)</span></a></li>
+                    <li {% block topology_active %}{% endblock %}><a href="/topology/">Network Topology</a></li>
 					<li {% block apply_active %}{% endblock %}><a href="/apply/">Apply</a></li>
 					<li {% block vms_active %}{% endblock %}><a href="/myVMs/">My VMs</a></li>
                     {% if is_administer %}

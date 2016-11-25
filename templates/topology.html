@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}
+My Virtual Machines
+{% endblock %}
+
+{% block custom_css %}
+    <link rel="stylesheet" href="/css/topology.css">
+{% endblock %}
+
+{% block topology_active %}
+    class = "active"
+{% endblock %}
+
+{% block container %}
+    <div class="container">
+        <div class="row">
+            <svg class="col-md-12 col-lg-12 col-sm-12 col-xs-12" height="600"></svg>
+        </div>
+
+    </div>
+{% endblock %}
+
+{% block custom_js %}
+    <script src="/lib/d3/d3.min.js"></script>
+    <script src="/js/topology.js"></script>
+{% endblock %}

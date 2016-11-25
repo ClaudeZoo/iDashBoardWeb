@@ -20,7 +20,7 @@ from iDashBoardWeb.settings import CSS_DIR, JS_DIR, IMG_DIR, LIB_DIR
 from Web import views, apply_views, audit_views, myvms_views, application_views
 from Web import detail_views, vm_views, info_update, control_vm_views
 from Web import create_vm_views, nat_views, delete_vm_views, notification
-from Web import monitor
+from Web import monitor, topology
 
 urlpatterns = [
     url(r'^$', views.home),
@@ -29,6 +29,7 @@ urlpatterns = [
     url(r'^js/(?P<path>.*)', serve, {'document_root': JS_DIR}),
     url(r'^img/(?P<path>.*)', serve, {'document_root': IMG_DIR}),
     url(r'^lib/(?P<path>.*)', serve, {'document_root': LIB_DIR}),
+    url(r'^topology/$', topology.topology_view),
     url(r'^apply/$', apply_views.apply_view),
     url(r'^audit/$', audit_views.audit_view),
     url(r'^myVMs', myvms_views.my_vms_view),
