@@ -61,14 +61,4 @@ target/
 
 *.ids
 
-iDashBoardWeb/settings.py
-
 *.iml
-
-.idea/iDashBoardWeb.iml
-
-.idea/iDashBoardWeb.iml
-
-*.xml
-
-*.xml
