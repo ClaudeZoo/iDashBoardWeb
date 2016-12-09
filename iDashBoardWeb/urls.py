@@ -16,15 +16,17 @@ Including another URLconf
 from django.conf.urls import include, url
 from django.contrib import admin
 from django.views.static import serve
+from django.contrib.auth import views as auth_views
 from iDashBoardWeb.settings import CSS_DIR, JS_DIR, IMG_DIR, LIB_DIR
 from Web import views, apply_views, audit_views, myvms_views, application_views
 from Web import detail_views, vm_views, info_update, control_vm_views
 from Web import create_vm_views, nat_views, delete_vm_views, notification
-from Web import monitor, topology
+from Web import monitor, topology, network_view
 
 urlpatterns = [
     url(r'^$', views.home),
     url(r'^home/$', views.home),
+    url(r'^accounts/login/$', auth_views.login),
     url(r'^css/(?P<path>.*)', serve, {'document_root': CSS_DIR}),
     url(r'^js/(?P<path>.*)', serve, {'document_root': JS_DIR}),
     url(r'^img/(?P<path>.*)', serve, {'document_root': IMG_DIR}),
@@ -66,5 +68,7 @@ urlpatterns = [
     url(r'^refuse_single_delete/$', audit_views.refuse_single_delete),
     url(r'^free_ports', nat_views.get_free_ports),
     url(r'^iamonline', monitor.online),
+    url(r'^network_test', network_view.network_test),
+    url(r'^topology_data', topology.topology_data),
     url(r'^admin/', include(admin.site.urls)),
 ]

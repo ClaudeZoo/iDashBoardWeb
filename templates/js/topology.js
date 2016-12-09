@@ -16,7 +16,8 @@ $(document).ready(function() {
         .force("charge", d3.forceManyBody().strength(-100))
         .force("center", d3.forceCenter(width / 2, height / 2));
 
-    d3.json("/js/topology.json", function (error, graph) {
+    // d3.json("/js/topology.json", function (error, graph) {
+    d3.json("/topology_data", function (error, graph) {
         if (error) throw error;
 
         var link = svg.append("g")

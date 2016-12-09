@@ -23,7 +23,7 @@ class VM(models.Model):
     info = models.OneToOneField('MachineInfo')
     state = models.CharField(max_length=15)
     user = models.ForeignKey(User, related_name='my_vms', null=True)
-    host = models.ForeignKey('Host', related_name='vms', null=True)
+    host = models.ForeignKey(Host, related_name='vms', null=True)
     uuid = models.TextField(null=True)
     name = models.TextField(null=True)
     os = models.CharField(max_length=20, null=True)
@@ -216,3 +216,30 @@ class MachineInfo(models.Model):
             self.process = info["process"]
         if "Disk" in info:
             self.disk = info["Disk"]
+
+
+class Network(models.Model):
+    name = models.TextField(max_length=30, null=False)
+    type = models.CharField(max_length=10, null=False)
+    host = models.ForeignKey('Host')
+    machines = models.TextField(max_length=500, null=False)
+    ip = models.CharField(max_length=16)
+    netmask = models.CharField(max_length=16)
+    lower_ip = models.CharField(max_length=16)
+    upper_ip = models.CharField(max_length=16)
+
+
+class NetInterface(models.Model):
+    vm = models.ForeignKey('VM', on_delete=models.CASCADE, related_query_name="interface")
+    eth0_type = models.CharField(max_length=10, null=False)
+    eth0_network = models.ForeignKey('Network', related_name="eth0_vms", null=True)
+    eth0_ip = models.CharField(max_length=16, null=True)
+    eth1_type = models.CharField(max_length=10, null=False)
+    eth1_network = models.ForeignKey('Network', related_name="eth1_vms", null=True)
+    eth1_ip = models.CharField(max_length=16, null=True)
+    eth2_type = models.CharField(max_length=10, null=False)
+    eth2_network = models.ForeignKey('Network', related_name="eth2_vms", null=True)
+    eth2_ip = models.CharField(max_length=16, null=True)
+    eth3_type = models.CharField(max_length=10, null=False)
+    eth3_network = models.ForeignKey('Network', related_name="eth3_vms", null=True)
+    eth3_ip = models.CharField(max_length=16, null=True)
