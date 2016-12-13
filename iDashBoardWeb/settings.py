@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/1.7/ref/settings/
 import os
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
+STATIC_ROOT = os.path.join(BASE_DIR, 'templates')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.7/howto/deployment/checklist/
@@ -22,9 +23,7 @@ SECRET_KEY = 'th3o22f#4to&+gn^4nrwurk#%cfvm-)9y(%m6qhjt_=!59x#*7'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-TEMPLATE_DEBUG = True
-
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [u'58.205.208.81', u'10.0.0.127', u'127.0.0.1', u'0.0.0.0']
 
 
 # Application definition
@@ -62,9 +61,9 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'iDashBoard',
         'USER': 'root',
-        'PASSWORD': 'thss2014zy',
-        'HOST': '58.205.208.70',
-        'PORT': '8779'
+        'PASSWORD': 'wuzher1||',
+        'HOST': '127.0.0.1',
+        'PORT': 3306
     }
 }
 
@@ -89,14 +88,27 @@ ROOT_URLCONF = 'iDashBoardWeb.urls'
 
 STATIC_URL = '/static/'
 
-TEMPLATE_DIRS = (
-    os.path.join(BASE_DIR,  'templates'),
-)
+LOGIN_URL = '/'
+
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+            ]
+        },
+    },
+]
 
 CSS_DIR = './templates/css'
 JS_DIR = './templates/js'
 IMG_DIR = './templates/img'
 LIB_DIR = './templates/lib'
+
 
 SESSION_COOKIE_AGE = 60*30
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False

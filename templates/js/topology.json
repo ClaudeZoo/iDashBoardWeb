@@ -1,0 +1,30 @@
+{
+  "nodes": [
+    {"id": "thucloud1", "name": "thucloud1", "group": 1, "size": 30},
+    {"id": "thucloud2", "group": 2, "size": 30},
+    {"id": "thucloud3", "group": 3, "size": 30},
+    {"id": "vm1", "group": 1, "size": 20},
+    {"id": "vm2", "group": 1, "size": 20},
+    {"id": "vm3", "group": 1, "size": 20},
+    {"id": "vm4", "group": 2, "size": 20},
+    {"id": "vm5", "group": 2, "size": 20},
+    {"id": "vm6", "group": 3, "size": 20}
+  ],
+  "links": [
+    {"source": "thucloud1", "target": "thucloud2", "value": 40, "group": 1},
+    {"source": "thucloud2", "target": "thucloud3", "value": 40, "group": 1},
+    {"source": "thucloud3", "target": "thucloud1", "value": 40, "group": 1},
+    {"source": "thucloud1", "target": "vm1", "value": 2, "group": 2},
+    {"source": "thucloud1", "target": "vm2", "value": 2, "group": 2},
+    {"source": "thucloud1", "target": "vm3", "value": 2, "group": 2},
+    {"source": "vm1", "target": "vm2", "value": 10, "group": 3},
+    {"source": "vm1", "target": "vm5", "value": 10, "group": 5},
+    {"source": "vm2", "target": "vm3", "value": 10, "group": 3},
+    {"source": "vm3", "target": "vm1", "value": 10, "group": 3},
+    {"source": "thucloud2", "target": "vm4", "value": 2, "group": 2},
+    {"source": "thucloud2", "target": "vm5", "value": 2, "group": 2},
+    {"source": "vm4", "target": "vm5", "value": 10, "group": 5},
+    {"source": "thucloud3", "target": "vm6", "value": 2, "group": 2},
+    {"source": "vm1", "target": "vm4", "value": 10, "group": 5}
+  ]
+}

@@ -80,7 +80,12 @@ def user_login(request):
             user = authenticate(username=username, password=password)
             if user is not None and user.is_active:
                 login(request, user)
-                return HttpResponseRedirect('/')
+                redirect_url = request.GET.get('next', '')
+                print(redirect_url)
+                if redirect_url:
+                    return HttpResponseRedirect(redirect_url)
+                else:
+                    return HttpResponseRedirect('/')
         else:
             return HttpResponseRedirect('/')
     return HttpResponseRedirect('/')

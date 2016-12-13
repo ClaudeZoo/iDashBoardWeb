@@ -15,6 +15,7 @@ class Host(models.Model):
     state = models.CharField(max_length=15, null=True)
     ip = models.CharField(max_length=20, null=True)
     vm_manager_port = models.IntegerField(null=True)
+    monitor_port = models.IntegerField(null=True)
     ports_info = models.TextField(null=True)
 
 
@@ -22,7 +23,7 @@ class VM(models.Model):
     info = models.OneToOneField('MachineInfo')
     state = models.CharField(max_length=15)
     user = models.ForeignKey(User, related_name='my_vms', null=True)
-    host = models.ForeignKey('Host', related_name='vms', null=True)
+    host = models.ForeignKey(Host, related_name='vms', null=True)
     uuid = models.TextField(null=True)
     name = models.TextField(null=True)
     os = models.CharField(max_length=20, null=True)
@@ -52,13 +53,14 @@ class CreateApplication(models.Model):
     error = models.TextField(null=True)
     vm = models.ForeignKey(VM, null=True)
     host = models.ForeignKey('Host', null=True)
+    reason = models.TextField(max_length=100, null=True)
 
     class Meta:
         ordering = ['-submission_time']
 
     def audit_info(self):
         info_dict = dict(id=self.id, applicant=self.applicant.username, submission_time=self.submission_time,
-                         vm_type=self.vm_type, os=self.os, memory=self.memory)
+                         vm_type=self.vm_type, os=self.os, memory=self.memory, reason=self.reason)
         return info_dict
 
     def application_info(self):
@@ -72,7 +74,7 @@ class CreateApplication(models.Model):
             reviewer = ""
         info_dict = dict(id=self.id, submission_time=self.submission_time, review_time=self.review_time,
                          vm_type=self.vm_type, os=self.os, memory=self.memory, state=self.state, error=self.error,
-                         vm_name=vm_name, reviewer=reviewer)
+                         vm_name=vm_name, reviewer=reviewer, reason=self.reason)
         return info_dict
 
 
@@ -214,3 +216,30 @@ class MachineInfo(models.Model):
             self.process = info["process"]
         if "Disk" in info:
             self.disk = info["Disk"]
+
+
+class Network(models.Model):
+    name = models.TextField(max_length=30, null=False)
+    type = models.CharField(max_length=10, null=False)
+    host = models.ForeignKey('Host')
+    machines = models.TextField(max_length=500, null=False)
+    ip = models.CharField(max_length=16)
+    netmask = models.CharField(max_length=16)
+    lower_ip = models.CharField(max_length=16)
+    upper_ip = models.CharField(max_length=16)
+
+
+class NetInterface(models.Model):
+    vm = models.ForeignKey('VM', on_delete=models.CASCADE, related_query_name="interface")
+    eth0_type = models.CharField(max_length=10, null=False)
+    eth0_network = models.ForeignKey('Network', related_name="eth0_vms", null=True)
+    eth0_ip = models.CharField(max_length=16, null=True)
+    eth1_type = models.CharField(max_length=10, null=False)
+    eth1_network = models.ForeignKey('Network', related_name="eth1_vms", null=True)
+    eth1_ip = models.CharField(max_length=16, null=True)
+    eth2_type = models.CharField(max_length=10, null=False)
+    eth2_network = models.ForeignKey('Network', related_name="eth2_vms", null=True)
+    eth2_ip = models.CharField(max_length=16, null=True)
+    eth3_type = models.CharField(max_length=10, null=False)
+    eth3_network = models.ForeignKey('Network', related_name="eth3_vms", null=True)
+    eth3_ip = models.CharField(max_length=16, null=True)

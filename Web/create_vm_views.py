@@ -17,7 +17,9 @@ def apply_new_vm(request):
         os = request.POST.get('os', '')
         memory = int(request.POST.get('memory', ''))
         vm_type = request.POST.get('vm_type', '')
-        application = CreateApplication(applicant=request.user, vm_type=vm_type, os=os, memory=memory, state='pending')
+        reason = request.POST.get('reason', '')
+        application = CreateApplication(applicant=request.user, vm_type=vm_type, os=os, memory=memory, reason=reason,
+                                        state='pending')
         is_administer = is_admin(request.user)
         has_applied = 1
         application.save()

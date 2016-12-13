@@ -4,6 +4,7 @@ from django.shortcuts import HttpResponse
 from django.core.exceptions import ObjectDoesNotExist
 from Web.models import VM
 from Web.models import Host
+from Web.communication import communicate
 
 
 def update_info(request):
@@ -11,6 +12,11 @@ def update_info(request):
         uuid = request.POST['uuid'].strip('\n')
         try:
             vm = VM.objects.get(uuid=uuid)
+            if vm.state == "Offline":
+                vm.state = 'Online'
+                vm.save()
+                request_dict = dict(vm_uuid=uuid, type='end')
+                communicate(request_dict, vm.host.ip, vm.host.monitor_port)
             info = vm.info
         except ObjectDoesNotExist:
             return HttpResponse('error')

@@ -58,3 +58,7 @@ target/
 .idea/workspace.xml
 
 *.xml
+
+*.ids
+
+*.iml
