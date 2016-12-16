@@ -49,7 +49,7 @@ $(document).ready(function () {
                 return color(d.group)
             })
             .on("dblclick", function (d) {
-                window.open("/detail/" + d.id)
+                window.open("/detail/" + d.id + "/");
             });
         /*
          var cc = clickcancel();
