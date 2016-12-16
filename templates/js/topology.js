@@ -66,11 +66,11 @@ $(document).ready(function () {
         var label = node.append("text")
             .attr("dy", ".35em")
             .text(function (d) {
-                return d.id;
+                return d.name;
             });
         node.append("title")
             .text(function (d) {
-                return d.id + "\n" + d.id;
+                return "VM Name: " + d.name + "\nuuid: " + d.uuid + "\nMemory: " + d.memory;
             });
 
         simulation
