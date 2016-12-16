@@ -70,7 +70,7 @@ $(document).ready(function () {
             });
         node.append("title")
             .text(function (d) {
-                return "VM Name: " + d.name + "\nuuid: " + d.uuid + "\nMemory: " + d.memory;
+                return "VM Name: " + d.name + "\nMemory: " + d.memory + "\nuuid: " + d.uuid;
             });
 
         simulation
