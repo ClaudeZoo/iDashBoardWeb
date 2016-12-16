@@ -21,6 +21,9 @@ def topology_data(request):
             nodes.append(dict(id=vm.info_id, group=host.info_id, size=10+vm.memory/512 * 5, name=vm.name, uuid=vm.uuid,
                               memory=vm.memory))
             links.append(dict(source=host.info_id, target=vm.info_id, group=0, value=2))
+    for i in range(len(hosts) - 1):
+        links.append(dict(source=hosts[i], target=hosts[i+1], group=0, value=10))
+    links.append(dict(source=hosts[-1], target=hosts[0], group=0, value=10))
     for network in Network.objects.all():
         machines = json.loads(network.machines)
         if len(machines) > 1:
