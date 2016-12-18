@@ -50,6 +50,7 @@ def add_vm_to_intnet(user, network, vm):
     if_code, if_no, vm_interface = set_vm_network(vm, network)
 
     if if_no > 0:
+        print(vm.name)
         data_dict = dict(request_type="network", request_id=random_str(), request_userid=user.id,
                          operation_type=ADD_VM_TO_INTNET, net_name=network.name, vm_name=vm.name, if_code=if_code,
                          if_no=if_no)
@@ -90,6 +91,7 @@ def remove_vm_from_network(user, vm, network, operation_type):
                      operation_type=operation_type, net_name=network.name, vm_name=vm.name, if_no=if_no,
                      if_code=if_code)
     communicate(data_dict, vm.host.ip, vm.host.vm_manager_port)
+    print(vm.name)
 
 
 def create_hostonly(user, host, ip, netmask, lower_ip, upper_ip):
@@ -124,8 +126,24 @@ def add_vm_to_hostonly(user, network, vm):
         network.save()
 
 
-def create_intnet_with_vms():
-    pass
+def create_intnet_with_vms(request):
+    try:
+        vms = (request.POST.get('vms', '')).split(',')
+        host_id = request.POST.get('host', '')
+        host = Host.objects.get(pk=host_id)
+        net_name = request.POST.get('net_name', '')
+        net_ip = request.POST.get('net_ip', '')
+        net_mask = request.POST.get('net_mask', '')
+        lower_ip = request.POST.get('lower_ip', '')
+        upper_ip = request.POST.get('upper_ip', '')
+        create_intnet(request.user, host, net_name, net_ip, net_mask, lower_ip, upper_ip)
+        for vm_name in vms:
+            vm = VM.objects.get(name=vm_name)
+            network = Network.objects.get(name=net_name)
+            add_vm_to_intnet(request.user, network, vm)
+        return HttpResponse('Succeed')
+    except:
+        return HttpResponse('Failed')
 
 
 def create_hostonly_with_vms():

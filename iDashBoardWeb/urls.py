@@ -58,6 +58,7 @@ urlpatterns = [
     url(r'^apply_nat/$', nat_views.apply_nat),
     url(r'^delete_apply/$', delete_vm_views.apply_delete_vm),
     url(r'^reply_vmHost/$', notification.handle_notification),
+    url(r'^apply_subnet/$', network_view.create_intnet_with_vms),
     url(r'^approve_single_creation/$', audit_views.approve_single_creation),
     url(r'^approve_all_creation', audit_views.approve_all_creation),
     url(r'^approve_single_delete', audit_views.approve_single_delete),

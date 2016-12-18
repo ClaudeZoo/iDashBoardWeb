@@ -129,6 +129,37 @@ function confirmDelete(data_id){
     );
 }
 
+function configurationOfSubnet(){
+    if(selected_vms.size <= 1){
+        alert("[Error]Building a subnet needs more virtual machine.");
+    }else{
+        $('#networkModal').modal();
+    }
+}
+
+function applySubnet(){
+    var net_name = $("#net-name").val();
+    var net_ip = $("#net-ip").val();
+    var net_mask = $("#net-mask").val();
+    var lower_ip = $("#lower-ip").val();
+    var upper_ip = $("#upper-ip").val();
+    $.post('/apply_subnet/', {
+        'vms': (Array.from(selected_vms)).join(),
+        'host': host,
+        'net_name': net_name,
+        'net_ip': net_ip,
+        'net_mask': net_mask,
+        'lower_ip': lower_ip,
+        'upper_ip': upper_ip
+    }, function(response){
+        if(response == "Succeed"){
+            alert("Successfully Constructed a Subnet!");
+        }else{
+            alert("Failed to Construct a Subnet!");
+        }
+    });
+}
+
 function updateProcess(vm_name, uuid, items){
     return function(){
         $.post('/start_monitor/', {'uuid': uuid, 'vm-name': vm_name, 'request_type': 'query'}, function(response){
