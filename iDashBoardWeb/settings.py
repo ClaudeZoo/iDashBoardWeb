@@ -59,10 +59,10 @@ WSGI_APPLICATION = 'iDashBoardWeb.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'iDashBoard',
+        'NAME': 'iDashBoard_zzc',
         'USER': 'root',
-        'PASSWORD': 'wuzher1||',
-        'HOST': '127.0.0.1',
+        'PASSWORD': 'thss2014zy',
+        'HOST': '58.205.208.81',
         'PORT': 3306
     }
 }

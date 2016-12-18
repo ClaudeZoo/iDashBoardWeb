@@ -17,6 +17,16 @@ My Virtual Machines
 {% endblock %}
 
 {% block container %}
+    <script type="application/javascript">
+        var selected_vms = new Set();
+        checkbox_onchange = function(checkboxEle, name){
+            if(checkboxEle.checked){
+                selected_vms.add(name);
+            }else{
+                selected_vms.delete(name);
+            }
+        }
+    </script>
     <div class="container">
         <div class="row">
             <!-- <div class="col-md-10 col-md-offset-1"> -->
@@ -25,7 +35,7 @@ My Virtual Machines
                 <table id="myVMs-data-table" class="display table table-hover table-bordered" cellspacing="0" width="100%">
                     <thead>
                         <tr>
-                            <th>VM Name</th>
+                            <th> VM Name</th>
                             <th class="hiding">VM UUID</th>
                             <th class="hiding">VM Host</th>
                             <th>IP : Port (For SSH)</th>
@@ -33,13 +43,33 @@ My Virtual Machines
                             <th>Manage</th>
                         </tr>
                     </thead>
+                    <tfoot>
+                        <tr>
+                            <th colspan="4">
+                                <!--
+                                <input type="checkbox" name="{{ vm.name }}-checkbox" style="transform: scale(1);">
+                                &nbsp;&nbsp;
+                                -->
+                                <div class="btn-group" role="group" aria-label="...">
+                                    <button type="button" class="btn btn-default" onclick="configurationOfSubnet()">Build Subnet</button>
+                                </div>
+                            </th>
+                        </tr>
+                    </tfoot>
                     <tbody>
+                        <form>
                         {% for vm in vms %}
+                            <script>
+                                var host = {{ vm.host }};
+                            </script>
                         <tr class="tooltip-options"  data-placement="top" data-toggle="tooltip" title=
                                 "<p>VM Type:{{ vm.vm_type}}</p>
                                  <p>OS:{{ vm.os }}</p>
                                  <p>Memory:{{ vm.memory }}</p>">
-                            <td>{{ vm.name }}</td>
+                            <td>
+                                <input type="checkbox" name="{{ vm.name }}-checkbox" onchange="checkbox_onchange(this, '{{ vm.name }}')" style="transform: scale(1);">
+                                {{ vm.name }}
+                            </td>
                             <td class="hiding vm-uuid">{{ vm.uuid }}</td>
                             <td class="hiding host-id">{{ vm.host }}</td>
                             <td>{{ vm.ip }} : {{ vm.ssh_port }}</td>
@@ -87,6 +117,7 @@ My Virtual Machines
                             </td>
                         </tr>
                         {% endfor %}
+                        </form>
                     </tbody>
                 </table>
             </div>
@@ -142,4 +173,43 @@ My Virtual Machines
             </div>
         </div>
     </div>
+    <div class="modal fade" id="networkModal" tabindex="-1" role="dialog" aria-labelledby="natModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Subnet Construction</h4>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group">
+                            <label>Subnet Name</label>
+                            <input type="text" class="form-control" id="net-name"/>
+                        </div>
+                        <div class="form-group">
+                            <label>IP</label>
+                            <input type="text" class="form-control" id="net-ip" placeholder="192.168.1.0"/>
+                        </div>
+                        <div class="form-group">
+                            <label>Subnet Mask</label>
+                            <input type="text" class="form-control" id="net-mask" placeholder="255.255.255.0"/>
+                        </div>
+                        <div class="form-group">
+                            <label>Lower IP</label>
+                            <input type="text" class="form-control" id="lower-ip" placeholder="192.168.1.1"/>
+                        </div>
+                        <div class="form-group">
+                            <label>Upper IP</label>
+                            <input type="text" class="form-control" id="upper-ip" placeholder="192.168.1.254"/>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" onclick=applySubnet()>确定</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 {% endblock %}
