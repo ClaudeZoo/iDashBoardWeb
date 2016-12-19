@@ -1,7 +1,9 @@
 # coding:utf-8
 import random
 import string
+from django.db.models import ObjectDoesNotExist
 from vp_interface import *
+from models import NetInterface
 
 
 def random_str(random_length=8):  # 获取8位随机虚拟机名字
@@ -17,3 +19,35 @@ def calculate_if_code(vm_net_if):
     if vm_net_if.eth3_type != NULL:
         if_code += 1
     return if_code
+
+
+def set_vm_network(vm, network):
+    try:
+        vm_interface = NetInterface.objects.get(vm=vm)
+    except ObjectDoesNotExist:  # 如果该 VM 还没有网卡的记录条目，就创建一个
+        vm_interface = NetInterface(vm=vm, eth0_type=NULL, eth1_type=NULL, eth2_type=NULL, eth3_type=NULL)
+        vm_interface.save()
+        if_code = 4  # 因为此前没有使用 eth1 - eth3 号网卡，所以 eth1 可用，code 值为 4，no 值为 1
+        if_no = 1
+    else:
+        if_code = calculate_if_code(vm_interface)
+
+        free_ifs = if_code ^ 7  # 异或操作，值为 1 的位即是可用的
+        if free_ifs >= 4:  # 如果eth1 可用，优先使用eth1
+            if_no = 1
+            if_code += 4
+            vm_interface.eth1_type = network.type
+            vm_interface.eth1_network = network
+        elif free_ifs >= 2:  # eth2 可用
+            if_no = 2
+            if_code += 2
+            vm_interface.eth2_type = network.type
+            vm_interface.eth2_network = network
+        elif free_ifs >= 1:  # eth3 可用
+            if_no = 3
+            if_code += 1
+            vm_interface.eth3_type = network.type
+            vm_interface.eth3_network = network
+        else:
+            if_no = 0
+    return if_code, if_no, vm_interface
