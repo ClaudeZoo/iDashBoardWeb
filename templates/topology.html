@@ -6,6 +6,7 @@ My Virtual Machines
 
 {% block custom_css %}
     <link rel="stylesheet" href="/css/topology.css">
+    <link rel="stylesheet" href="/css/d3-context-menu.css">
 {% endblock %}
 
 {% block topology_active %}
@@ -19,9 +20,32 @@ My Virtual Machines
         </div>
 
     </div>
+    <div class="modal fade" id="DeleteVMSubnetModal" tabindex="-1" role="dialog" aria-labelledby="DeleteVMSubnetModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Delete a vm in a subnet</h4>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div id="subnets" class="form-group">
+                            <label>Subnet</label>
+
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="button" id="rm_vm" class="btn btn-primary" data-dismiss="modal" onclick="rm_vm_from_networks()">确定</button>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}
 
 {% block custom_js %}
     <script src="/lib/d3/d3.min.js"></script>
+    <script src="/js/d3-context-menu.js"></script>
     <script src="/js/topology.js"></script>
 {% endblock %}

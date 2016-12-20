@@ -31,6 +31,7 @@ urlpatterns = [
     url(r'^js/(?P<path>.*)', serve, {'document_root': JS_DIR}),
     url(r'^img/(?P<path>.*)', serve, {'document_root': IMG_DIR}),
     url(r'^lib/(?P<path>.*)', serve, {'document_root': LIB_DIR}),
+
     url(r'^topology/$', topology.topology_view),
     url(r'^apply/$', apply_views.apply_view),
     url(r'^audit/$', audit_views.audit_view),
@@ -51,6 +52,7 @@ urlpatterns = [
     url(r'^get-detail/(?P<vm_id>\d+)/$', detail_views.get_detail),
     url(r'^helloServer/$', info_update.hello_server),
     url(r'^saveVMState/$', info_update.update_info),
+
     url(r'^start_vm/$', control_vm_views.start_vm),
     url(r'^start_monitor/$', control_vm_views.start_monitor),
     url(r'^control_vm/$', control_vm_views.control_vm),
@@ -59,6 +61,8 @@ urlpatterns = [
     url(r'^delete_apply/$', delete_vm_views.apply_delete_vm),
     url(r'^reply_vmHost/$', notification.handle_notification),
     url(r'^apply_subnet/$', network_view.create_intnet_with_vms),
+    url(r'^rm_vm_from_networks/$', network_view.rm_vm_from_networks),
+
     url(r'^approve_single_creation/$', audit_views.approve_single_creation),
     url(r'^approve_all_creation', audit_views.approve_all_creation),
     url(r'^approve_single_delete', audit_views.approve_single_delete),

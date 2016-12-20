@@ -80,6 +80,7 @@ def remove_vm_from_network(user, vm, network, operation_type):
         vm_if.eth3_network = None
         if_no = 3
     else:
+        #handle an error
         pass
 
     if_code = calculate_if_code(vm_if)
@@ -141,6 +142,23 @@ def create_intnet_with_vms(request):
             vm = VM.objects.get(name=vm_name)
             network = Network.objects.get(name=net_name)
             add_vm_to_intnet(request.user, network, vm)
+        return HttpResponse('Succeed')
+    except:
+        return HttpResponse('Failed')
+
+def rm_vm_from_networks(request):
+    try:
+        network_ids = (request.POST.get('network_ids', '')).split(',')
+        info_id = request.POST.get('info_id', '')
+        vm = VM.objects.get(info_id=info_id)
+        if vm.state == 'Offline':
+            return HttpResponse('Offline')
+        print(network_ids)
+        for network_id in network_ids:
+            print(network_id)
+            network = Network.objects.get(id=network_id)
+            remove_vm_from_network(request.user, vm, network, network.type)
+
         return HttpResponse('Succeed')
     except:
         return HttpResponse('Failed')
