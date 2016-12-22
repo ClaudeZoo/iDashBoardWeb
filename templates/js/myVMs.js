@@ -154,6 +154,7 @@ function applySubnet(){
     }, function(response){
         if(response == "Succeed"){
             alert("Successfully Constructed a Subnet!");
+            location.reload();
         }else{
             alert("Failed to Construct a Subnet!");
         }

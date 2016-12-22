@@ -14,6 +14,7 @@ def topology_view(request):
 def topology_data(request):
     nodes = list()
     links = list()
+    node_subnets = dict()
     hosts = Host.objects.all()
     for host in hosts:
         nodes.append(dict(id=host.info_id, group=host.info_id, size=40, name=host.ip))
@@ -29,6 +30,21 @@ def topology_data(request):
             for i in range(len(machines) - 1):
                 links.append(dict(source=machines[i], target=machines[i+1], group=network.id, value=5))
             links.append(dict(source=machines[-1], target=machines[0], group=network.id, value=5))
-    ret = dict(nodes=nodes, links=links)
+
+    #node_subnets
+    for interface in NetInterface.objects.all():
+        vm_info_id = (VM.objects.get(id=interface.vm_id)).info_id
+        network1_dict, network2_dict, network3_dict = "", "", ""
+        if interface.eth1_network_id:
+            network1 = Network.objects.get(id=interface.eth1_network_id)
+            network1_dict = {'name':network1.name,'id':network1.id}
+        if interface.eth2_network_id:
+            network2 = Network.objects.get(id=interface.eth2_network_id)
+            network2_dict = {'name':network2.name,'id':network2.id}
+        if interface.eth3_network_id:
+            network3 = Network.objects.get(id=interface.eth3_network_id)
+            network3_dict = {'name':network3.name,'id':network3.id}
+        node_subnets[vm_info_id] = [network1_dict, network2_dict, network3_dict]
+    ret = dict(nodes=nodes, links=links, node_subnets=node_subnets)
     return HttpResponse(json.dumps(ret))
 

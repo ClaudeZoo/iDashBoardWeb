@@ -1,22 +1,27 @@
 .links line {
-  stroke-opacity: 0.8;
+    stroke-opacity: 0.8;
 }
 
 .nodes circle {
-  stroke: #fff;
-  stroke-width: 1.5px;
+    stroke: #fff;
+    stroke-width: 1.5px;
 }
 
 .node text {
-  display: none;
-  pointer-events: none;
-  font-size: 12px;
+    display: none;
+    pointer-events: none;
+    font-size: 12px;
 }
 
 .node:hover circle {
-  fill: #0ff;
+    fill: #0ff;
 }
 
 .node:hover text {
-  display: inline;
+    display: inline;
+}
+
+/* sub-menu*/
+#context-menu{
+    display:block;
 }
