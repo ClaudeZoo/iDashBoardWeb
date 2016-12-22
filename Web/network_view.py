@@ -117,7 +117,7 @@ def remove_vm_from_network(user, vm, network, operation_type):
     network.machines = json.dumps(machines)
     network.save()
     data_dict = dict(request_type="network", request_id=random_str(), request_userid=user.id,
-                     operation_type=operation_type, net_name=network.name, vm_name=vm.name, if_no=if_no,
+                     operation_type=REMOVE_VM_FROM_NETWORK, net_name=network.name, vm_name=vm.name, if_no=if_no,
                      if_code=if_code)
     communicate(data_dict, vm.host.ip, vm.host.vm_manager_port)
     print(vm.name)
