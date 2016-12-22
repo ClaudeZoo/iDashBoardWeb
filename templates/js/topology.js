@@ -54,11 +54,11 @@ $(document).ready(function () {
     simulation = d3.forceSimulation()
         .force("link", d3.forceLink().id(function (d) {
             return d.id;
-        }).strength(0.1))
+        }).strength(0.05))
         .force("collision", d3.forceCollide().radius(function (d) {
             return d.size + 15;
         }))
-        .force("charge", d3.forceManyBody().strength(-100))
+        .force("charge", d3.forceManyBody().strength(-300))
         .force("center", d3.forceCenter(width / 2, height / 2));
 
 
@@ -115,6 +115,7 @@ $(document).ready(function () {
 
         var label = node.append("text")
             .attr("dy", ".35em")
+            .attr("dx", "-28px")
             .text(function (d) {
                 return d.name;
             });
@@ -158,7 +159,7 @@ $(document).ready(function () {
 
             label
                 .attr("x", function (d) {
-                    return d.x + d.size + 4
+                    return d.x
                 })
                 .attr("y", function (d) {
                     return d.y;
