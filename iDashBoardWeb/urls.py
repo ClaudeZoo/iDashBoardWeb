@@ -69,7 +69,7 @@ urlpatterns = [
     url(r'^refuse_single_delete/$', audit_views.refuse_single_delete),
     url(r'^free_ports', nat_views.get_free_ports),
     url(r'^iamonline', monitor.online),
-    url(r'^network_test', network_view.network_test),
+    url(r'^network_api', network_view.network_view),
     url(r'^topology_data', topology.topology_data),
     url(r'^admin/', include(admin.site.urls)),
 ]
