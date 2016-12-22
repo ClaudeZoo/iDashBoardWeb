@@ -110,7 +110,7 @@ def remove_vm_from_network(user, vm, network, operation_type):
     else:
         # handle an error
         pass
-
+    vm_if.save()
     if_code = calculate_if_code(vm_if)
     machines = json.loads(network.machines)
     machines.remove(vm.info_id)
