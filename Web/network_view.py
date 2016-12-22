@@ -1,6 +1,7 @@
 # coding: utf-8
 import json
 from django.db.models import ObjectDoesNotExist
+from django.utils.datastructures import MultiValueDictKeyError
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import HttpResponse
 from models import Network, NetInterface, Host, VM, MachineInfo
@@ -9,15 +10,43 @@ from vp_interface import *
 from util import *
 
 
-@login_required
+# @login_required
 def network_view(request):
     operation_type = request.POST['operation_type']
-    if operation_type == CREATE_INTNET:
-        pass
-    elif operation_type == DELETE_INTNET:
-        pass
-    else:
-        pass
+    try:
+        if operation_type == CREATE_INTNET:
+            pass
+        elif operation_type == DELETE_INTNET:
+            net = Network.objects.get(name=request.POST['net_name'])
+            delete_intnet(request.user, net.host, net)
+        elif operation_type == ADD_VM_TO_INTNET:
+            net = Network.objects.get(name=request.POST['net_name'])
+            vm = VM.objects.get(name=request.POST['vm_name'])
+            add_vm_to_intnet(request.user, net, vm)
+
+        elif operation_type == CREATE_HOSTONLY:
+            host = Host.objects.get(id=int(request.POST['id']))
+            create_hostonly(request.user, host, request.POST['ip'], request.POST['netmask'], request.POST['lower_ip'],
+                            request.POST['upper_ip'])
+        elif operation_type == DELETE_HOSTONLY:
+            net = Network.objects.get(name=request.POST['net_name'])
+            delete_hostonly(request.user, net.host, net)
+        elif operation_type == ADD_VM_TO_HOSTONLY:
+            net = Network.objects.get(name=request.POST['net_name'])
+            vm = VM.objects.get(name=request.POST['vm_name'])
+            add_vm_to_hostonly(request.user, net, vm)
+
+        elif operation_type == REMOVE_VM_FROM_NETWORK:
+            net = Network.objects.get(name=request.POST["net_name"])
+            vm = VM.objects.get(name=request.POST["vm_name"])
+            remove_vm_from_network(request.user, vm, net, net.type)
+        else:
+            pass
+    except ObjectDoesNotExist:
+        return HttpResponse("Objects Not Found")
+    except MultiValueDictKeyError:
+        return HttpResponse("Wrong Value")
+    return HttpResponse("success")
 
 
 @login_required
@@ -39,11 +68,10 @@ def create_intnet(user, host, net_name, ip, netmask, lower_ip, upper_ip):
 
 
 def delete_intnet(user, host, network):
+    cascaded_delete_interface(network)
     data_dict = dict(request_type="network", request_id=random_str(), request_userid=user.id,
                      operation_type=DELETE_INTNET, net_name=network.name)
     communicate(data_dict, host.ip, host.vm_manager_port)
-    network_to_delete = Network.objects.get(name=network.name)
-    network_to_delete.delete()
 
 
 def add_vm_to_intnet(user, network, vm):
@@ -107,6 +135,7 @@ def create_hostonly(user, host, ip, netmask, lower_ip, upper_ip):
 
 
 def delete_hostonly(user, host, network):
+    cascaded_delete_interface(network)
     data_dict = dict(request_type="network", request_id=random_str(), request_userid=user.id,
                      operation_type=DELETE_HOSTONLY, net_name=network.name)
     communicate(data_dict, host.ip, host.vm_manager_port)
