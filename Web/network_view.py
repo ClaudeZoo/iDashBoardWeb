@@ -146,6 +146,7 @@ def create_intnet_with_vms(request):
     except:
         return HttpResponse('Failed')
 
+
 def rm_vm_from_networks(request):
     try:
         network_ids = (request.POST.get('network_ids', '')).split(',')
