@@ -26,9 +26,12 @@ def set_vm_network(vm, network):
         vm_interface = NetInterface.objects.get(vm=vm)
     except ObjectDoesNotExist:  # 如果该 VM 还没有网卡的记录条目，就创建一个
         vm_interface = NetInterface(vm=vm, eth0_type=NULL, eth1_type=NULL, eth2_type=NULL, eth3_type=NULL)
+        vm_interface.eth1_type = network.type
+        vm_interface.eth1_network = network
         vm_interface.save()
         if_code = 4  # 因为此前没有使用 eth1 - eth3 号网卡，所以 eth1 可用，code 值为 4，no 值为 1
         if_no = 1
+
     else:
         if_code = calculate_if_code(vm_interface)
 

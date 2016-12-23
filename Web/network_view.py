@@ -108,16 +108,16 @@ def remove_vm_from_network(user, vm, network, operation_type):
         vm_if.eth3_network = None
         if_no = 3
     else:
-        #handle an error
+        # handle an error
         pass
-
+    vm_if.save()
     if_code = calculate_if_code(vm_if)
     machines = json.loads(network.machines)
     machines.remove(vm.info_id)
     network.machines = json.dumps(machines)
     network.save()
     data_dict = dict(request_type="network", request_id=random_str(), request_userid=user.id,
-                     operation_type=operation_type, net_name=network.name, vm_name=vm.name, if_no=if_no,
+                     operation_type=REMOVE_VM_FROM_NETWORK, net_name=network.name, vm_name=vm.name, if_no=if_no,
                      if_code=if_code)
     communicate(data_dict, vm.host.ip, vm.host.vm_manager_port)
     print(vm.name)
@@ -159,8 +159,7 @@ def add_vm_to_hostonly(user, network, vm):
 def create_intnet_with_vms(request):
     try:
         vms = (request.POST.get('vms', '')).split(',')
-        host_id = request.POST.get('host', '')
-        host = Host.objects.get(pk=host_id)
+        host = VM.objects.get(name=vms[0]).host
         net_name = request.POST.get('net_name', '')
         net_ip = request.POST.get('net_ip', '')
         net_mask = request.POST.get('net_mask', '')
@@ -174,6 +173,7 @@ def create_intnet_with_vms(request):
         return HttpResponse('Succeed')
     except:
         return HttpResponse('Failed')
+
 
 def rm_vm_from_networks(request):
     try:
