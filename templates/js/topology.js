@@ -1,7 +1,7 @@
-
+var node_subnets, nodes, links, selected_vm_info_id, selected_subnet, available_vms;
 
 $(document).ready(function () {
-    var node_subnets, selected_vm_info_id;
+
 
     var svg = d3.select("svg"),
         width = +svg.property("clientWidth"),
@@ -36,7 +36,8 @@ $(document).ready(function () {
                             console.log(subnets[i]);
                             var network_name = subnets[i]['name'];
                             var network_id = subnets[i]['id'];
-                            $("#subnets").html("");
+                            $("#subnets").empty();
+                            $("#subnets").append("<label>Subnets</label>");
                             if(subnets[i] != ""){
                                 $('#subnets').append($('<br><input type="checkbox" name="checkbox-' + network_id + '">' + network_name + '</input>'));
                             }
@@ -56,23 +57,64 @@ $(document).ready(function () {
 
     var link_menu = function(d){
         if(d.group == 0 ){
-            return [{
+            return [
                 /*
                 title: 'Show Details',
                 action: function(elm, d) {
                     window.open("/detail/" + d.id + "/");
                 }*/
-            }];
+            ];
         }else{
             return [{
                 title:'Delete a vm in this subnet',
                 action: function(){
-                    alert('Delete a vm in this subnet');
+                    var vms_in_subnet= new Set();
+
+                    selected_subnet = d.group;
+                    for(var i = 0; i < links.length; i++){
+                        if(links[i].group == d.group){
+                            if(!vms_in_subnet.has(links[i].source.id)){
+                                vms_in_subnet.add(links[i].source.id);
+                            }
+                            if(!vms_in_subnet.has(links[i].target.id)){
+                                vms_in_subnet.add(links[i].target.id);
+                            }
+                        }
+                    }
+                    console.log(vms_in_subnet);
+                    available_vms = [];
+                    for(var i = 0; i < nodes.length; i++){
+                        if(nodes[i]['uuid'] != undefined && !(vms_in_subnet.has(nodes[i].id))){
+                            available_vms.push(nodes[i])
+                        }
+                    }
+                    console.log(available_vms);
+                    $("#vms").empty();
+                    $("#vms").append("<label>Virtual Machines</label>");
+
+                    $("#addVM-btn").attr("disabled",false);
+                    if(available_vms.length == 0){
+                        $("#vms").append("<br><h4>No available virtual machines could be added in this subnet</h4>");
+                        $("#addVM-btn").attr("disabled",true);
+                    }else{
+                        for(var i = 0; i < available_vms.length; i++){
+                            $('#subnets').append(
+                                $(
+                                    '<br><input type="checkbox" name="checkbox-' +
+                                    available_vms[i].id + '">' + available_vms[i].name + '</input>'
+                                )
+                            );
+                        }
+
+                    }
+
+                    $('#AddVMModal').modal();
                 }
             },{
                 title:'Delete this subnet',
                 action: function(){
-                    $('#deleteNetModal').modal();
+                    selected_subnet = d.group;
+                    $('#DeleteNetModal').modal();
                 }
             }]
         }
@@ -86,7 +128,7 @@ $(document).ready(function () {
             return d.size + 15;
         }))
         .force("charge", d3.forceManyBody().strength(-1000))
-        .force("center", d3.forceCenter(width / 2, height / 2));  
+        .force("center", d3.forceCenter(width / 2, height / 2));
 
 
     //d3.json("/js/topology.json", function (error, graph) {
@@ -94,6 +136,10 @@ $(document).ready(function () {
         if (error) throw error;
 
         node_subnets = graph.node_subnets;
+
+        nodes = graph.nodes;
+
+        links = graph.links;
 
         var circles = [];
         graph.links.forEach(function(link) {
@@ -245,9 +291,7 @@ $(document).ready(function () {
                 var homogeneous=3.2;
                 var dx = (d.target.x - d.source.x),
                     dy = (d.target.y - d.source.y),
-                    dr = Math.sqrt(dx * dx + dy * dy),
-                    offsetDX = (dx * d.target.size) / dr,
-                    offsetDY = (dy * d.target.size) / dr;
+                    dr = Math.sqrt(dx * dx + dy * dy);
 
                 var totalLinkNum = linkNum[d.source.id + "," + d.target.id] || linkNum[d.target.id + "," + d.source.id];
                 if(totalLinkNum > 1){
@@ -255,13 +299,14 @@ $(document).ready(function () {
                 }
 
                 return "M" + d.source.x + "," + d.source.y +
-                "A" + dr + "," + dr + " 0 0 1," + (d.target.x - offsetDX) + "," + (d.target.y - offsetDY) +
+                "A" + dr + "," + dr + " 0 0 1," + d.target.x + "," + d.target.y +
                 "A" + dr + "," + dr + " 0 0 0," + d.source.x + "," + d.source.y;
             })
         }
     });
-})
-;
+
+
+});
 
 function clickcancel() {
     var event = d3.dispatch('click', 'dblclick');
@@ -327,7 +372,7 @@ function dragended(d) {
 }
 
 function rm_vm_from_networks(){
-    var selected_subnets = $(':checked');
+    var selected_subnets = $('#subnets :checked');
     if(selected_subnets != []){
         var network_ids = [];
         for(var i = 0; i < selected_subnets.length; i++){
@@ -349,10 +394,48 @@ function rm_vm_from_networks(){
 
         })
     }else{
-        alert("Please choose a subnet!");
+        alert("Please choose a subnet at least!");
     }
 }
 
 function confirmDeleteNet(){
+    $.post('/del_network/', {
+        'network_id':selected_subnet
+    }, function(response){
+        if(response == 'Offline'){
+            alert('Be sure to start all relevant virtual machines, ' +
+                'if you want to delete this subnet!');
+        }else if(response == 'Failed'){
+            alert('Failed to delete this subnet.');
+        }else{
+            alert('Succeed!');
+        }
+    })
+}
+
+function confirmAddVM(){
+    var selected_vms = $('#vms :checked');
+    if(selected_vms != []){
+        $.post('/add_vm_in_network/', {
+            'network_id':selected_subnet,
+            'vm_info_ids':available_vms.map(function(x){
+                return x.id;
+            }).join(',')
+        }, function(response){
+            if(response.offline_vms_name != undefined){
+                var failed_vms_name_str =
+                alert('Failed to add offline virtual machine(s) into this subnet: \n' +
+                    response.offline_vms_name.join(',') + '\n' +
+                    'Please start them(it)!');
+            }else if(response == 'Failed'){
+                alert('Failed to add this vm into this subnet.');
+            }else{
+                alert('Succeed!');
+            }
+        });
+    }else{
+        alert("Please choose a virtual machine at least!");
+    }
 
 }
+

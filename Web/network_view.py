@@ -156,7 +156,7 @@ def add_vm_to_hostonly(user, network, vm):
         network.save()
 
 
-def create_intnet_with_vms(request):
+def create_intnet_with_vms_req(request):
     try:
         vms = (request.POST.get('vms', '')).split(',')
         host = VM.objects.get(name=vms[0]).host
@@ -175,7 +175,7 @@ def create_intnet_with_vms(request):
         return HttpResponse('Failed')
 
 
-def rm_vm_from_networks(request):
+def rm_vm_from_networks_req(request):
     try:
         network_ids = (request.POST.get('network_ids', '')).split(',')
         info_id = request.POST.get('info_id', '')
@@ -187,8 +187,38 @@ def rm_vm_from_networks(request):
             print(network_id)
             network = Network.objects.get(id=network_id)
             remove_vm_from_network(request.user, vm, network, network.type)
-
         return HttpResponse('Succeed')
+    except:
+        return HttpResponse('Failed')
+
+
+def del_network_req(request):
+    try:
+        network_id = request.POST.get('network_id', '')
+        network = Network.objects.get(id=network_id)
+        host = Host.objects.get(id=network.host_id) # ???? network.host_id => host.id, host.info_id ???
+        delete_intnet(request.user, host, network)
+        return HttpResponse('Succeed')
+    except:
+        return HttpResponse('Failed')
+
+
+def add_vm_to_intnet_req(request):
+    try:
+        vm_info_ids = (request.POST.get('vm_info_ids', '')).split(',')
+        network_id = request.POST.get('network_id', '')
+        network = Network.objects.get(id=network_id)
+        offline_vm_names = []
+        for vm_info_id in vm_info_ids:
+            vm = VM.objects.get(info_id=vm_info_id)
+            if vm.state == 'Offline':
+                offline_vm_names.append(vm.name)
+            else:
+                add_vm_to_intnet(request.user, network, vm)
+        if offline_vm_names == []:
+            return HttpResponse('Succeed')
+        else:
+            return HttpResponse(json.dumps({'offline_vms_name':offline_vm_names}))
     except:
         return HttpResponse('Failed')
 
