@@ -145,7 +145,6 @@ function applySubnet(){
     var upper_ip = $("#upper-ip").val();
     $.post('/apply_subnet/', {
         'vms': (Array.from(selected_vms)).join(),
-        'host': host,
         'net_name': net_name,
         'net_ip': net_ip,
         'net_mask': net_mask,

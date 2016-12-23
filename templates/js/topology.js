@@ -11,6 +11,7 @@ $(document).ready(function () {
 
 
     var node_menu = function(d) {
+
         if(d.size == 70 || node_subnets[d.id] == undefined){
             return [{
                 title: 'Show Details',
@@ -85,7 +86,7 @@ $(document).ready(function () {
             return d.size + 15;
         }))
         .force("charge", d3.forceManyBody().strength(-1000))
-        .force("center", d3.forceCenter(width / 2, height / 2));
+        .force("center", d3.forceCenter(width / 2, height / 2));  
 
 
     //d3.json("/js/topology.json", function (error, graph) {
