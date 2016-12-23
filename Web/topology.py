@@ -5,46 +5,32 @@ from Web.views import is_admin
 from Web.models import Host, VM, MachineInfo, NetInterface, Network
 
 
-@login_required
+#@login_required
 def topology_view(request):
     return render_to_response('topology.html', locals())
 
 
-@login_required
+#@login_required
 def topology_data(request):
     nodes = list()
     links = list()
     node_subnets = dict()
     hosts = Host.objects.all()
-
-    node_index = dict()
-    k = 0
     for host in hosts:
-        nodes.append(dict(id=host.info_id, group=host.info_id, size=40, name=host.ip))
-        node_index[host.info_id] = k
-        j = k
-        k += 1
+        nodes.append(dict(id=host.info_id, group=host.info_id, size=70, name=host.ip))
         for vm in host.vms.all().exclude(state="deleted"):
-            nodes.append(dict(id=vm.info_id, group=host.info_id, size=10+vm.memory/512 * 5, name=vm.name, uuid=vm.uuid,
+            nodes.append(dict(id=vm.info_id, group=host.info_id, size=35+vm.memory/512 * 5, name=vm.name, uuid=vm.uuid,
                               memory=vm.memory))
-            node_index[vm.info_id] = k
-            links.append(dict(source=j, target=k, group=0, value=2))
-            k += 1
-
-
+            links.append(dict(source=host.info_id, target=vm.info_id, group=0, value=2))
     for i in range(len(hosts) - 1):
-        links.append(dict(source=node_index[hosts[i].info_id], target=node_index[hosts[i+1].info_id], group=0, value=10))
-    #links.append(dict(source=hosts[-1].info_id, target=hosts[0].info_id, group=0, value=10))
-    network_id = 1
+        links.append(dict(source=hosts[i].info_id, target=hosts[i+1].info_id, group=0, value=10))
     for network in Network.objects.all():
         machines = json.loads(network.machines)
         if len(machines) > 1:
             for i in range(len(machines) - 1):
-                print(node_index[machines[i]])
-                links.append(dict(source=node_index[machines[i]], target=node_index[machines[i+1]], group=network_id, value=5))
-            if len(machines) > 2:
-                links.append(dict(source=node_index[machines[-1]], target=node_index[machines[0]], group=network_id, value=5))
-            network_id += 1
+                links.append(dict(source=machines[i], target=machines[i+1], group=network.id, value=5))
+        if len(machines) > 2:
+            links.append(dict(source=machines[-1], target=machines[0], group=network.id, value=5))
 
     #node_subnets
     for interface in NetInterface.objects.all():
@@ -60,7 +46,6 @@ def topology_data(request):
             network3 = Network.objects.get(id=interface.eth3_network_id)
             network3_dict = {'name':network3.name,'id':network3.id}
         node_subnets[vm_info_id] = [network1_dict, network2_dict, network3_dict]
-
     ret = dict(nodes=nodes, links=links, node_subnets=node_subnets)
     return HttpResponse(json.dumps(ret))
 

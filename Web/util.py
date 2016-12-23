@@ -51,3 +51,18 @@ def set_vm_network(vm, network):
         else:
             if_no = 0
     return if_code, if_no, vm_interface
+
+
+def cascaded_delete_interface(network):
+    for vm in network.eth1_vms.all():
+        vm.eth1_network = None
+        vm.eth1_type = NULL
+        vm.save()
+    for vm in network.eth2_vms.all():
+        vm.eth2_network = None
+        vm.eth2_type = NULL
+        vm.save()
+    for vm in network.eth3_vms.all():
+        vm.eth3_network = None
+        vm.eth3_type = NULL
+        vm.save()

@@ -1,24 +1,23 @@
-.links line {
-    stroke-opacity: 0.8;
+path {
+    z-index: 0;
 }
 
 .nodes circle {
     stroke: #fff;
     stroke-width: 1.5px;
+    z-index: 10;
 }
 
 .node text {
-    display: none;
+    display: inline;
     pointer-events: none;
     font-size: 12px;
+    color: white;
+    font-family: "Bitstream Vera Sans Mono", Monaco, "Courier New", Courier, monospace;
 }
 
 .node:hover circle {
     fill: #0ff;
-}
-
-.node:hover text {
-    display: inline;
 }
 
 /* sub-menu*/
