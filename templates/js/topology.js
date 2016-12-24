@@ -69,22 +69,26 @@ $(document).ready(function () {
                 title:'Add a vm to this LAN',
                 action: function(){
                     var vms_in_subnet= new Set();
-
+                    var current_host;
                     selected_subnet = d.group;
                     for(var i = 0; i < links.length; i++){
                         if(links[i].group == d.group){
                             if(!vms_in_subnet.has(links[i].source.id)){
                                 vms_in_subnet.add(links[i].source.id);
+                                current_host = links[i].source.group;
                             }
                             if(!vms_in_subnet.has(links[i].target.id)){
                                 vms_in_subnet.add(links[i].target.id);
+                                current_host = links[i].target.group;
                             }
                         }
                     }
+                    
                     console.log(vms_in_subnet);
                     available_vms = [];
+
                     for(var i = 0; i < nodes.length; i++){
-                        if(nodes[i]['uuid'] != undefined && !(vms_in_subnet.has(nodes[i].id))){
+                        if(nodes[i]['uuid'] != undefined && !(vms_in_subnet.has(nodes[i].id)) && nodes[i]['group'] == current_host){
                             available_vms.push(nodes[i])
                         }
                     }
@@ -127,7 +131,7 @@ $(document).ready(function () {
         .force("collision", d3.forceCollide().radius(function (d) {
             return d.size + 15;
         }))
-        .force("charge", d3.forceManyBody().strength(-1000))
+        .force("charge", d3.forceManyBody().strength(-500))
         .force("center", d3.forceCenter(width / 2, height / 2));
 
 
@@ -389,6 +393,7 @@ function rm_vm_from_networks(){
                 alert('Failed to remove this vm from a subnet.');
             }else{
                 alert('Succeed!');
+                location.reload();
             }
 
         })
@@ -408,6 +413,7 @@ function confirmDeleteNet(){
             alert('Failed to delete this subnet.');
         }else{
             alert('Succeed!');
+            location.reload();
         }
     })
 }
@@ -430,6 +436,7 @@ function confirmAddVM(){
                 alert('Failed to add this vm into this subnet.');
             }else{
                 alert('Succeed!');
+                location.reload();
             }
         });
     }else{

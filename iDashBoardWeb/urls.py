@@ -63,7 +63,7 @@ urlpatterns = [
     url(r'^apply_subnet/$', network_view.create_intnet_with_vms_req),
     url(r'^rm_vm_from_networks/$', network_view.rm_vm_from_networks_req),
     url(r'^del_network/$', network_view.del_network_req),
-    url(r'^add_vm_in_network/$', network_view.del_network_req),
+    url(r'^add_vm_in_network/$', network_view.add_vm_to_intnet_req),
 
     url(r'^approve_single_creation/$', audit_views.approve_single_creation),
     url(r'^approve_all_creation', audit_views.approve_all_creation),
