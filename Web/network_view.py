@@ -160,16 +160,26 @@ def create_intnet_with_vms_req(request):
     try:
         vms = (request.POST.get('vms', '')).split(',')
         host = VM.objects.get(name=vms[0]).host
+        net_type = request.POST.get('net_type', '')
         net_name = request.POST.get('net_name', '')
         net_ip = request.POST.get('net_ip', '')
         net_mask = request.POST.get('net_mask', '')
         lower_ip = request.POST.get('lower_ip', '')
         upper_ip = request.POST.get('upper_ip', '')
-        create_intnet(request.user, host, net_name, net_ip, net_mask, lower_ip, upper_ip)
-        for vm_name in vms:
-            vm = VM.objects.get(name=vm_name)
-            network = Network.objects.get(name=net_name)
-            add_vm_to_intnet(request.user, network, vm)
+        if net_type == 'Internal Network':
+            create_intnet(request.user, host, net_name, net_ip, net_mask, lower_ip, upper_ip)
+            for vm_name in vms:
+                vm = VM.objects.get(name=vm_name)
+                network = Network.objects.get(name=net_name)
+                add_vm_to_intnet(request.user, network, vm)
+
+        elif net_type == 'Host-Only':
+            create_hostonly(request.user, host, net_ip, net_mask, lower_ip, upper_ip)
+            for vm_name in vms:
+                vm = VM.objects.get(name=vm_name)
+                network = Network.objects.get(name=net_name)
+                add_vm_to_hostonly(request.user, network, vm)
+
         return HttpResponse('Succeed')
     except:
         return HttpResponse('Failed')

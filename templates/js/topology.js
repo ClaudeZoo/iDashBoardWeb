@@ -83,7 +83,7 @@ $(document).ready(function () {
                             }
                         }
                     }
-                    
+
                     console.log(vms_in_subnet);
                     available_vms = [];
 
@@ -131,7 +131,7 @@ $(document).ready(function () {
         .force("collision", d3.forceCollide().radius(function (d) {
             return d.size + 15;
         }))
-        .force("charge", d3.forceManyBody().strength(-500))
+        .force("charge", d3.forceManyBody().strength(-900))
         .force("center", d3.forceCenter(width / 2, height / 2));
 
 
