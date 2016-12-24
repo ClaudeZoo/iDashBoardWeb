@@ -4,6 +4,7 @@ import string
 from django.db.models import ObjectDoesNotExist
 from vp_interface import *
 from models import NetInterface
+from network_view import remove_vm_from_network
 
 
 def random_str(random_length=8):  # 获取8位随机虚拟机名字
@@ -58,14 +59,17 @@ def set_vm_network(vm, network):
 
 def cascaded_delete_interface(network):
     for vm in network.eth1_vms.all():
+        remove_vm_from_network(vm.user, vm, vm.eth1_network)
         vm.eth1_network = None
         vm.eth1_type = NULL
         vm.save()
     for vm in network.eth2_vms.all():
+        remove_vm_from_network(vm.user, vm, vm.eth2_network)
         vm.eth2_network = None
         vm.eth2_type = NULL
         vm.save()
     for vm in network.eth3_vms.all():
+        remove_vm_from_network(vm.user, vm, vm.eth3_network)
         vm.eth3_network = None
         vm.eth3_type = NULL
         vm.save()

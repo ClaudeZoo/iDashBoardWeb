@@ -39,7 +39,7 @@ def network_view(request):
         elif operation_type == REMOVE_VM_FROM_NETWORK:
             net = Network.objects.get(name=request.POST["net_name"])
             vm = VM.objects.get(name=request.POST["vm_name"])
-            remove_vm_from_network(request.user, vm, net, net.type)
+            remove_vm_from_network(request.user, vm, net)
         else:
             pass
     except ObjectDoesNotExist:
@@ -91,7 +91,7 @@ def add_vm_to_intnet(user, network, vm):
         network.save()
 
 
-def remove_vm_from_network(user, vm, network, operation_type):
+def remove_vm_from_network(user, vm, network):
     # 虚拟机必须是开机状态
     vm_if = NetInterface.objects.get(vm=vm)
 
@@ -187,7 +187,7 @@ def rm_vm_from_networks_req(request):
         for network_id in network_ids:
             print(network_id)
             network = Network.objects.get(id=network_id)
-            remove_vm_from_network(request.user, vm, network, network.type)
+            remove_vm_from_network(request.user, vm, network)
         return HttpResponse('Succeed')
     except:
         return HttpResponse('Failed')
