@@ -32,14 +32,14 @@ $(document).ready(function () {
                         }
 
                         var subnets = node_subnets[d.id];
+                        $("#subnets").empty();
                         for(var i = 0; i <= subnets.length - 1; i++){
                             console.log(subnets[i]);
                             var network_name = subnets[i]['name'];
                             var network_id = subnets[i]['id'];
-                            $("#subnets").empty();
                             $("#subnets").append("<label>Subnets</label>");
                             if(subnets[i] != ""){
-                                $('#subnets').append($('<br><input type="checkbox" name="checkbox-' + network_id + '">' + network_name + '</input>'));
+                                $('#subnets').append($('<br><input type="checkbox" name="checkbox-' + network_id + '"> ' + network_name + '</input>'));
                             }
                         }
                         selected_vm_info_id = d.id;
@@ -66,7 +66,7 @@ $(document).ready(function () {
             ];
         }else{
             return [{
-                title:'Delete a vm in this subnet',
+                title:'Add a vm to this LAN',
                 action: function(){
                     var vms_in_subnet= new Set();
 
@@ -98,7 +98,7 @@ $(document).ready(function () {
                         $("#addVM-btn").attr("disabled",true);
                     }else{
                         for(var i = 0; i < available_vms.length; i++){
-                            $('#subnets').append(
+                            $('#vms').append(
                                 $(
                                     '<br><input type="checkbox" name="checkbox-' +
                                     available_vms[i].id + '">' + available_vms[i].name + '</input>'
@@ -391,7 +391,6 @@ function rm_vm_from_networks(){
                 alert('Succeed!');
             }
 
-
         })
     }else{
         alert("Please choose a subnet at least!");
@@ -436,6 +435,5 @@ function confirmAddVM(){
     }else{
         alert("Please choose a virtual machine at least!");
     }
-
 }
 
