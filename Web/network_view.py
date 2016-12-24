@@ -39,7 +39,7 @@ def network_view(request):
         elif operation_type == REMOVE_VM_FROM_NETWORK:
             net = Network.objects.get(name=request.POST["net_name"])
             vm = VM.objects.get(name=request.POST["vm_name"])
-            remove_vm_from_network(request.user, vm, net, net.type)
+            remove_vm_from_network(request.user, vm, net)
         else:
             pass
     except ObjectDoesNotExist:
@@ -72,6 +72,7 @@ def delete_intnet(user, host, network):
     data_dict = dict(request_type="network", request_id=random_str(), request_userid=user.id,
                      operation_type=DELETE_INTNET, net_name=network.name)
     communicate(data_dict, host.ip, host.vm_manager_port)
+    network.delete()
 
 
 def add_vm_to_intnet(user, network, vm):
@@ -90,7 +91,7 @@ def add_vm_to_intnet(user, network, vm):
         network.save()
 
 
-def remove_vm_from_network(user, vm, network, operation_type):
+def remove_vm_from_network(user, vm, network):
     # 虚拟机必须是开机状态
     vm_if = NetInterface.objects.get(vm=vm)
 
@@ -196,7 +197,7 @@ def rm_vm_from_networks_req(request):
         for network_id in network_ids:
             print(network_id)
             network = Network.objects.get(id=network_id)
-            remove_vm_from_network(request.user, vm, network, network.type)
+            remove_vm_from_network(request.user, vm, network)
         return HttpResponse('Succeed')
     except:
         return HttpResponse('Failed')
@@ -206,7 +207,7 @@ def del_network_req(request):
     try:
         network_id = request.POST.get('network_id', '')
         network = Network.objects.get(id=network_id)
-        host = Host.objects.get(id=network.host_id) # ???? network.host_id => host.id, host.info_id ???
+        host = network.host
         delete_intnet(request.user, host, network)
         return HttpResponse('Succeed')
     except:
@@ -228,10 +229,21 @@ def add_vm_to_intnet_req(request):
         if offline_vm_names == []:
             return HttpResponse('Succeed')
         else:
-            return HttpResponse(json.dumps({'offline_vms_name':offline_vm_names}))
+            return HttpResponse(json.dumps({'offline_vms_name': offline_vm_names}))
     except:
         return HttpResponse('Failed')
 
 
 def create_hostonly_with_vms():
     pass
+
+
+def cascaded_delete_interface(network):
+    for vm_if in network.eth1_vms.all():
+        remove_vm_from_network(vm_if.vm.user, vm_if.vm, vm_if.eth1_network)
+
+    for vm_if in network.eth2_vms.all():
+        remove_vm_from_network(vm_if.vm.user, vm_if.vm, vm_if.eth2_network)
+
+    for vm_if in network.eth3_vms.all():
+        remove_vm_from_network(vm_if.vm.user, vm_if.vm, vm_if.eth3_network)
