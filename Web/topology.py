@@ -29,6 +29,7 @@ def topology_data(request):
         if len(machines) > 1:
             for i in range(len(machines) - 1):
                 links.append(dict(source=machines[i], target=machines[i+1], group=network.id, value=5))
+        if len(machines) > 2:
             links.append(dict(source=machines[-1], target=machines[0], group=network.id, value=5))
 
     #node_subnets
