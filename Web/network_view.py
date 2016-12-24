@@ -197,7 +197,7 @@ def del_network_req(request):
     try:
         network_id = request.POST.get('network_id', '')
         network = Network.objects.get(id=network_id)
-        host = Host.objects.get(id=network.host_id) # ???? network.host_id => host.id, host.info_id ???
+        host = network.host
         delete_intnet(request.user, host, network)
         return HttpResponse('Succeed')
     except:
