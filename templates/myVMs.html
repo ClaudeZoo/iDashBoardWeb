@@ -183,6 +183,13 @@ My Virtual Machines
                 <div class="modal-body">
                     <form>
                         <div class="form-group">
+                            <label>Subnet Type</label>
+                            <select id="net-type-selector"  class="form-control">
+                                <option>Internal Network</option>
+                                <option>Host-Only</option>
+                            </select>
+                        </div>
+                        <div id = "subnet-name-input" class="form-group">
                             <label>Subnet Name</label>
                             <input type="text" class="form-control" id="net-name"/>
                         </div>
@@ -206,7 +213,7 @@ My Virtual Machines
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-                    <button type="button" class="btn btn-primary" data-dismiss="modal" onclick=applySubnet()>确定</button>
+                    <button type="button" class="btn btn-primary" onclick=applySubnet()>确定</button>
                 </div>
             </div>
         </div>

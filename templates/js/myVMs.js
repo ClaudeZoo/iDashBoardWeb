@@ -1,5 +1,17 @@
 $(document).ready(function(){
     $(function () { $(".tooltip-options").tooltip({html : true });});
+
+    $("#net-type-selector").on("change", function(){
+        var net_type = $("#net-type-selector option:selected").val();
+        if(net_type == 'Internal Network'){
+            $('#subnet-name-input').show();
+        }else{
+            $('#subnet-name-input input').val("");
+            $('#subnet-name-input').hide();
+        }
+
+    })
+
     $("div.progress").hide();
     $(".state").hide();
     $("#myVMs-data-table").DataTable();
@@ -138,26 +150,54 @@ function configurationOfSubnet(){
 }
 
 function applySubnet(){
+    var net_type = $("#net-type").val();
     var net_name = $("#net-name").val();
     var net_ip = $("#net-ip").val();
     var net_mask = $("#net-mask").val();
     var lower_ip = $("#lower-ip").val();
     var upper_ip = $("#upper-ip").val();
-    $.post('/apply_subnet/', {
-        'vms': (Array.from(selected_vms)).join(),
-        'net_name': net_name,
-        'net_ip': net_ip,
-        'net_mask': net_mask,
-        'lower_ip': lower_ip,
-        'upper_ip': upper_ip
-    }, function(response){
-        if(response == "Succeed"){
-            alert("Successfully Constructed a Subnet!");
-            location.reload();
-        }else{
-            alert("Failed to Construct a Subnet!");
+
+
+    function ipValidate(ip){
+        var pattern = /([0-9]{1,3}\.{1}){3}[0-9]{1,3}/;
+        var result = pattern.exec(ip);
+        if(result == null || result[0]!= ip){
+            return false;
         }
-    });
+        return true;
+    }
+
+    if(net_type == "Internal Network" && net_name == ""){
+        alert("Please name your internal network!");
+    }else if(!(net_ip && net_mask && lower_ip && upper_ip)){
+        alert("Be sure to specify all parameters of your network!");
+    }else if(!(ipValidate(net_ip) && ipValidate(net_mask)
+        && ipValidate(lower_ip) && ipValidate(upper_ip))){
+        alert("Invalid parameters");
+    }else if(lower_ip >= upper_ip){
+        alert("Upper IP should be larger than lower IP!");
+    }else{
+        $('#networkModal').modal('hide');
+        $.post('/apply_subnet/', {
+            'vms': (Array.from(selected_vms)).join(),
+            'net_type':net_type,
+            'net_name': net_name,
+            'net_ip': net_ip,
+            'net_mask': net_mask,
+            'lower_ip': lower_ip,
+            'upper_ip': upper_ip
+        }, function(response){
+            if(response == "Succeed"){
+                alert("Successfully Constructed a Subnet!");
+                location.reload();
+            }else{
+                alert("Failed to Construct a Subnet!");
+            }
+        });
+    }
+
+
+
 }
 
 function updateProcess(vm_name, uuid, items){
