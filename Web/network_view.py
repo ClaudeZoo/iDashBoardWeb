@@ -226,3 +226,14 @@ def add_vm_to_intnet_req(request):
 
 def create_hostonly_with_vms():
     pass
+
+
+def cascaded_delete_interface(network):
+    for vm in network.eth1_vms.all():
+        remove_vm_from_network(vm.user, vm, vm.eth1_network)
+
+    for vm in network.eth2_vms.all():
+        remove_vm_from_network(vm.user, vm, vm.eth2_network)
+
+    for vm in network.eth3_vms.all():
+        remove_vm_from_network(vm.user, vm, vm.eth3_network)
