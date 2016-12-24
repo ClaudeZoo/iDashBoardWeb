@@ -33,11 +33,11 @@ $(document).ready(function () {
 
                         var subnets = node_subnets[d.id];
                         $("#subnets").empty();
+                        $("#subnets").append("<label>Subnets</label>");
                         for(var i = 0; i <= subnets.length - 1; i++){
                             console.log(subnets[i]);
                             var network_name = subnets[i]['name'];
                             var network_id = subnets[i]['id'];
-                            $("#subnets").append("<label>Subnets</label>");
                             if(subnets[i] != ""){
                                 $('#subnets').append($('<br><input type="checkbox" name="checkbox-' + network_id + '"> ' + network_name + '</input>'));
                             }
@@ -101,7 +101,7 @@ $(document).ready(function () {
                             $('#vms').append(
                                 $(
                                     '<br><input type="checkbox" name="checkbox-' +
-                                    available_vms[i].id + '">' + available_vms[i].name + '</input>'
+                                    available_vms[i].id + '"> ' + available_vms[i].name + '</input>'
                                 )
                             );
                         }

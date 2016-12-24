@@ -72,6 +72,7 @@ def delete_intnet(user, host, network):
     data_dict = dict(request_type="network", request_id=random_str(), request_userid=user.id,
                      operation_type=DELETE_INTNET, net_name=network.name)
     communicate(data_dict, host.ip, host.vm_manager_port)
+    network.delete()
 
 
 def add_vm_to_intnet(user, network, vm):
