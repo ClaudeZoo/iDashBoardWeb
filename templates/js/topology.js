@@ -127,11 +127,11 @@ $(document).ready(function () {
     simulation = d3.forceSimulation()
         .force("link", d3.forceLink().id(function (d) {
             return d.id;
-        }).strength(0.05))
+        }).strength(0.1))
         .force("collision", d3.forceCollide().radius(function (d) {
             return d.size + 15;
         }))
-        .force("charge", d3.forceManyBody().strength(-900))
+        .force("charge", d3.forceManyBody().strength(-600))
         .force("center", d3.forceCenter(width / 2, height / 2));
 
 

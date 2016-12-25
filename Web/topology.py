@@ -20,7 +20,7 @@ def topology_data(request):
     node_subnets = dict()
     hosts = Host.objects.all()
     for host in hosts:
-        nodes.append(dict(id=host.info_id, group=host.info_id, size=70, name=host.ip))
+        nodes.append(dict(id=host.info_id, group=host.info_id, size=70, name=host.info.hostname))
         for vm in host.vms.all().exclude(state="deleted"):
             nodes.append(
                 dict(id=vm.info_id, group=host.info_id, size=35 + vm.memory / 512 * 5, name=vm.name, uuid=vm.uuid,
