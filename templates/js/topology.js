@@ -56,7 +56,7 @@ $(document).ready(function () {
     }
 
     var link_menu = function(d){
-        if(d.group == 0 ){
+        if(d.group == 0 || d.group == 3){
             return [
                 /*
                 title: 'Show Details',
@@ -66,7 +66,7 @@ $(document).ready(function () {
             ];
         }else{
             return [{
-                title:'Add a vm to this LAN',
+                title:'Add a vm to this subnet',
                 action: function(){
                     var vms_in_subnet= new Set();
                     var current_host;
