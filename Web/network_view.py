@@ -173,7 +173,7 @@ def create_intnet_with_vms_req(request):
                 network = Network.objects.get(name=net_name)
                 add_vm_to_intnet(request.user, network, vm)
 
-        elif net_type == 'Host-Only':
+        else:
             create_hostonly(request.user, host, net_ip, net_mask, lower_ip, upper_ip)
             for vm_name in vms:
                 vm = VM.objects.get(name=vm_name)
