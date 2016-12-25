@@ -70,12 +70,12 @@ def create_intnet(user, host, net_name, ip, netmask, lower_ip, upper_ip):
 def create_hostonly(user, host, ip, netmask, lower_ip, upper_ip):
     data_dict = dict(request_type="network", request_id=random_str(), request_userid=user.id,
                      operation_type=CREATE_HOSTONLY, ip=ip, netmask=netmask, lower_ip=lower_ip, upper_ip=upper_ip)
-
     response_dict = communicate(data_dict, host.ip, host.vm_manager_port)
     net_name = response_dict["net_name"]
-    network = Network(name=net_name, type=INTNET, host=host, ip=ip, netmask=netmask, lower_ip=lower_ip,
+    network = Network(name=net_name, type=HOSTONLY, host=host, ip=ip, netmask=netmask, lower_ip=lower_ip,
                       upper_ip=upper_ip, machines=json.dumps([]))
     network.save()
+    return net_name
 
 
 def delete_intnet(user, host, network):
@@ -174,7 +174,7 @@ def create_intnet_with_vms_req(request):
                 add_vm_to_intnet(request.user, network, vm)
 
         else:
-            create_hostonly(request.user, host, net_ip, net_mask, lower_ip, upper_ip)
+            net_name = create_hostonly(request.user, host, net_ip, net_mask, lower_ip, upper_ip)
             for vm_name in vms:
                 vm = VM.objects.get(name=vm_name)
                 network = Network.objects.get(name=net_name)
