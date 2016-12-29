@@ -228,8 +228,9 @@ $(document).ready(function () {
             })
             .on('contextmenu', d3.contextMenu(node_menu));
 
-        var trans = d3.transition().duration(2000);
+
         d3.interval(function () {
+            var trans = d3.transition().duration(2000);
             circle.transition(trans)
                 .attr("r", function (d) {
                     return d.size + 5;
