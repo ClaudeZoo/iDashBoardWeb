@@ -29,9 +29,10 @@ def topology_data(request):
     for network in Network.objects.all():
         all_machines = json.loads(network.machines)
         machines = []
-        for machine in all_machines:
-            if VM.objects.get(info_id=machine).state == "Online":
-                machines.append(machine)
+        if network.type != BRIDGE:
+            for machine in all_machines:
+                if VM.objects.get(info_id=machine).state == "Online":
+                    machines.append(machine)
         if network.type == INTNET:
             if len(machines) > 1:
                 for i in range(len(machines) - 1):
@@ -46,6 +47,7 @@ def topology_data(request):
             if len(machines) >= 2:
                 links.append(dict(source=machines[-1], target=network.host.info_id, group=network.id, value=5))
         if network.type == BRIDGE:
+            machines = all_machines
             if len(machines) > 1:
                 for i in range(len(machines) - 1):
                     links.append(dict(source=machines[i], target=machines[i + 1], group=network.id, value=10))
