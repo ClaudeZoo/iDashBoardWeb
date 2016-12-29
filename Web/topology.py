@@ -21,13 +21,17 @@ def topology_data(request):
     hosts = Host.objects.all()
     for host in hosts:
         nodes.append(dict(id=host.info_id, group=host.info_id, size=70, name=host.info.hostname))
-        for vm in host.vms.all().exclude(state="deleted"):
+        for vm in host.vms.filter(state="Online"): # all().exclude(state="deleted"):
             nodes.append(
                 dict(id=vm.info_id, group=host.info_id, size=35 + vm.memory / 512 * 5, name=vm.name, uuid=vm.uuid,
                      memory=vm.memory))
             links.append(dict(source=host.info_id, target=vm.info_id, group=0, value=2))
     for network in Network.objects.all():
-        machines = json.loads(network.machines)
+        all_machines = json.loads(network.machines)
+        machines = []
+        for machine in all_machines:
+            if VM.objects.get(info_id=machine).state == "Online":
+                machines.append(machine)
         if network.type == INTNET:
             if len(machines) > 1:
                 for i in range(len(machines) - 1):

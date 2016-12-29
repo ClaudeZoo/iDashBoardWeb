@@ -1,83 +1,78 @@
-var node_subnets, nodes, links, selected_vm_info_id, selected_subnet, available_vms;
-
 $(document).ready(function () {
-
-
+    var node_subnets, nodes, links, selected_vm_info_id, selected_subnet, available_vms;
     var svg = d3.select("svg"),
         width = +svg.property("clientWidth"),
         height = +svg.property("clientHeight");
 
     var color = d3.scaleOrdinal(d3.schemeCategory20);
 
+    var node_menu = function (d) {
 
-    var node_menu = function(d) {
-
-        if(d.size == 70 || node_subnets[d.id] == undefined){
+        if (d.size == 70 || node_subnets[d.id] == undefined) {
             return [{
                 title: 'Show Details',
-                action: function(elm, d) {
+                action: function (elm, d) {
                     window.open("/detail/" + d.id + "/");
                 }
             }];
-        }else{
+        } else {
             return [{
-                    title: 'Delete it from a subnet',
-                    action: function(elm, d) {
-                        console.log('Delete it from a subnet!');
-                        console.log(elm);
-                        console.log('The data for this circle is: ' + d.size);
-                        console.log(node_subnets[d.id]);
-                        if($('[type=checkbox]')){
-                            $('[type=checkbox]').remove();
-                        }
-
-                        var subnets = node_subnets[d.id];
-                        $("#subnets").empty();
-                        $("#subnets").append("<label>Subnets</label>");
-                        for(var i = 0; i <= subnets.length - 1; i++){
-                            console.log(subnets[i]);
-                            var network_name = subnets[i]['name'];
-                            var network_id = subnets[i]['id'];
-                            if(subnets[i] != ""){
-                                $('#subnets').append($('<br><input type="checkbox" name="checkbox-' + network_id + '"> ' + network_name + '</input>'));
-                            }
-                        }
-                        selected_vm_info_id = d.id;
-                        $('#DeleteVMSubnetModal').modal();
+                title: 'Delete it from a subnet',
+                action: function (elm, d) {
+                    console.log('Delete it from a subnet!');
+                    console.log(elm);
+                    console.log('The data for this circle is: ' + d.size);
+                    console.log(node_subnets[d.id]);
+                    if ($('[type=checkbox]')) {
+                        $('[type=checkbox]').remove();
                     }
-                }, {
-                    title: 'Show Details',
-                    action: function(elm, d) {
+
+                    var subnets = node_subnets[d.id];
+                    $("#subnets").empty();
+                    $("#subnets").append("<label>Subnets</label>");
+                    for (var i = 0; i <= subnets.length - 1; i++) {
+                        console.log(subnets[i]);
+                        var network_name = subnets[i]['name'];
+                        var network_id = subnets[i]['id'];
+                        if (subnets[i] != "") {
+                            $('#subnets').append($('<br><input type="checkbox" name="checkbox-' + network_id + '"> ' + network_name + '</input>'));
+                        }
+                    }
+                    selected_vm_info_id = d.id;
+                    $('#DeleteVMSubnetModal').modal();
+                }
+            }, {
+                title: 'Show Details',
+                action: function (elm, d) {
                     window.open("/detail/" + d.id + "/");
-                    }
-                }];
+                }
+            }];
         }
+    };
 
-    }
-
-    var link_menu = function(d){
-        if(d.group == 0 || d.group == 3){
+    var link_menu = function (d) {
+        if (d.group == 0 || d.group == 3) {
             return [
                 /*
-                title: 'Show Details',
-                action: function(elm, d) {
-                    window.open("/detail/" + d.id + "/");
-                }*/
+                 title: 'Show Details',
+                 action: function(elm, d) {
+                 window.open("/detail/" + d.id + "/");
+                 }*/
             ];
-        }else{
+        } else {
             return [{
-                title:'Add a vm to this subnet',
-                action: function(){
-                    var vms_in_subnet= new Set();
+                title: 'Add a vm to this subnet',
+                action: function () {
+                    var vms_in_subnet = new Set();
                     var current_host;
                     selected_subnet = d.group;
-                    for(var i = 0; i < links.length; i++){
-                        if(links[i].group == d.group){
-                            if(!vms_in_subnet.has(links[i].source.id)){
+                    for (var i = 0; i < links.length; i++) {
+                        if (links[i].group == d.group) {
+                            if (!vms_in_subnet.has(links[i].source.id)) {
                                 vms_in_subnet.add(links[i].source.id);
                                 current_host = links[i].source.group;
                             }
-                            if(!vms_in_subnet.has(links[i].target.id)){
+                            if (!vms_in_subnet.has(links[i].target.id)) {
                                 vms_in_subnet.add(links[i].target.id);
                                 current_host = links[i].target.group;
                             }
@@ -87,8 +82,8 @@ $(document).ready(function () {
                     console.log(vms_in_subnet);
                     available_vms = [];
 
-                    for(var i = 0; i < nodes.length; i++){
-                        if(nodes[i]['uuid'] != undefined && !(vms_in_subnet.has(nodes[i].id)) && nodes[i]['group'] == current_host){
+                    for (var i = 0; i < nodes.length; i++) {
+                        if (nodes[i]['uuid'] != undefined && !(vms_in_subnet.has(nodes[i].id)) && nodes[i]['group'] == current_host) {
                             available_vms.push(nodes[i])
                         }
                     }
@@ -96,12 +91,12 @@ $(document).ready(function () {
                     $("#vms").empty();
                     $("#vms").append("<label>Virtual Machines</label>");
 
-                    $("#addVM-btn").attr("disabled",false);
-                    if(available_vms.length == 0){
+                    $("#addVM-btn").attr("disabled", false);
+                    if (available_vms.length == 0) {
                         $("#vms").append("<br><h4>No available virtual machines could be added in this subnet</h4>");
-                        $("#addVM-btn").attr("disabled",true);
-                    }else{
-                        for(var i = 0; i < available_vms.length; i++){
+                        $("#addVM-btn").attr("disabled", true);
+                    } else {
+                        for (var i = 0; i < available_vms.length; i++) {
                             $('#vms').append(
                                 $(
                                     '<br><input type="checkbox" name="checkbox-' +
@@ -111,20 +106,19 @@ $(document).ready(function () {
                         }
 
                     }
-
                     $('#AddVMModal').modal();
                 }
-            },{
-                title:'Delete this subnet',
-                action: function(){
+            }, {
+                title: 'Delete this subnet',
+                action: function () {
                     selected_subnet = d.group;
                     $('#DeleteNetModal').modal();
                 }
             }]
         }
-     }
+    };
 
-    simulation = d3.forceSimulation()
+    var simulation = d3.forceSimulation()
         .force("link", d3.forceLink().id(function (d) {
             return d.id;
         }).strength(0.1))
@@ -134,9 +128,7 @@ $(document).ready(function () {
         .force("charge", d3.forceManyBody().strength(-600))
         .force("center", d3.forceCenter(width / 2, height / 2));
 
-
-    //d3.json("/js/topology.json", function (error, graph) {
-    d3.json("/topology_data", function (error, graph) {
+    var draw = function (error, graph) {
         if (error) throw error;
 
         node_subnets = graph.node_subnets;
@@ -146,14 +138,14 @@ $(document).ready(function () {
         links = graph.links;
 
         var circles = [];
-        graph.links.forEach(function(link) {
+        graph.links.forEach(function (link) {
             circles.push({
                 source: graph.nodes[link.source],
                 target: graph.nodes[link.target]
             });
         });
         //sort links by source, target, then group
-        graph.links.sort(function(a,b) {
+        graph.links.sort(function (a, b) {
             if (a.source > b.source) {
                 return 1;
             } else if (a.source < b.source) {
@@ -161,14 +153,15 @@ $(document).ready(function () {
             } else {
                 if (a.target > b.target) {
                     return 1;
-                }if (a.target < b.target) {
+                }
+                if (a.target < b.target) {
                     return -1;
                 } else {
-                    if(a.group > b.group){
+                    if (a.group > b.group) {
                         return 1;
-                    }else if(a.group < b.group){
+                    } else if (a.group < b.group) {
                         return -1;
-                    }else{
+                    } else {
                         return 0;
                     }
                 }
@@ -179,20 +172,19 @@ $(document).ready(function () {
         //any links with duplicate source and target get an incremented 'linknum'
         for (var i = 0; i < graph.links.length; i++) {
             if (i != 0 &&
-                graph.links[i].source == graph.links[i-1].source &&
-               graph.links[i].target == graph.links[i-1].target) {
-                graph.links[i].linkindex = graph.links[i-1].linkindex + 1;
+                graph.links[i].source == graph.links[i - 1].source &&
+                graph.links[i].target == graph.links[i - 1].target) {
+                graph.links[i].linkindex = graph.links[i - 1].linkindex + 1;
             } else {
                 graph.links[i].linkindex = 1;
             }
             // save the total number of links between two nodes
-            if(linkNum[graph.links[i].target + "," + graph.links[i].source] !== undefined) {
+            if (linkNum[graph.links[i].target + "," + graph.links[i].source] !== undefined) {
                 linkNum[graph.links[i].target + "," + graph.links[i].source] = graph.links[i].linkindex;
             } else {
                 linkNum[graph.links[i].source + "," + graph.links[i].target] = graph.links[i].linkindex;
             }
         }
-
 
 
         var node = svg.selectAll(".node")
@@ -203,7 +195,6 @@ $(document).ready(function () {
                 .on("start", dragstarted)
                 .on("drag", dragged)
                 .on("end", dragended));
-
 
         // Add a circle element to the previously added g element.
         var circle = node.append("circle")
@@ -217,18 +208,21 @@ $(document).ready(function () {
             .on("dblclick", function (d) {
                 window.open("/detail/" + d.id + "/");
             })
-            .on('contextmenu',d3.contextMenu(node_menu));
-        /*
-         var cc = clickcancel();
-         circle.call(cc);
-         cc.on('click', function () {
-         alert("click")
-         });
-         cc.on('dblclick', function () {
-         alert("dbclick")
-         });
-         */
-        // Add a text element to the previously added g element.
+            .on('contextmenu', d3.contextMenu(node_menu));
+
+        var trans = d3.transition().duration(2000);
+        d3.interval(function () {
+            circle.transition(trans)
+                .attr("r", function (d) {
+                    return d.size + 5;
+                })
+                .transition(trans)
+                .attr("r", function (d) {
+                    return d.size - 5;
+                });
+
+        }, 4000, d3.now());
+
 
         var label = node.append("text")
             .attr("dy", ".35em")
@@ -243,23 +237,23 @@ $(document).ready(function () {
 
         var path = svg.selectAll("path")
             .data(graph.links)
-            .enter().insert('g','.node')
+            .enter().insert('g', '.node')
             .append("path")
-            .style("stroke", function(d) {
+            .style("stroke", function (d) {
                 return color(d.group);
             })
             .attr("stroke-width", function (d) {
                 return d.value;
             })
-            .attr("group_id", function(d){
+            .attr("group_id", function (d) {
                 return d.group;
 
             })
-            .on('mouseover', function(d){
-                d3.selectAll('[group_id="' + d.group + '"]').style('stroke',"#666");
+            .on('mouseover', function (d) {
+                d3.selectAll('[group_id="' + d.group + '"]').style('stroke', "#666");
             })
-            .on('mouseout', function(d){
-                d3.selectAll('[group_id="' + d.group + '"]').style('stroke',color(d.group));
+            .on('mouseout', function (d) {
+                d3.selectAll('[group_id="' + d.group + '"]').style('stroke', color(d.group));
 
             })
             .on('contextmenu', d3.contextMenu(link_menu));
@@ -272,7 +266,6 @@ $(document).ready(function () {
             .links(graph.links);
 
         function ticked() {
-
             circle
                 .attr("cx", function (d) {
                     return d.x;
@@ -280,7 +273,6 @@ $(document).ready(function () {
                 .attr("cy", function (d) {
                     return d.y;
                 });
-            //.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
 
             label
                 .attr("x", function (d) {
@@ -290,157 +282,116 @@ $(document).ready(function () {
                     return d.y;
                 });
             path
-                .attr("d", function(d){
-                var curve = 2;
-                var homogeneous=3.2;
-                var dx = (d.target.x - d.source.x),
-                    dy = (d.target.y - d.source.y),
-                    dr = Math.sqrt(dx * dx + dy * dy);
+                .attr("d", function (d) {
+                    var curve = 2;
+                    var homogeneous = 3.2;
+                    var dx = (d.target.x - d.source.x),
+                        dy = (d.target.y - d.source.y),
+                        dr = Math.sqrt(dx * dx + dy * dy);
 
-                var totalLinkNum = linkNum[d.source.id + "," + d.target.id] || linkNum[d.target.id + "," + d.source.id];
-                if(totalLinkNum > 1){
-                    dr = dr/(1 + (1/totalLinkNum) * (d.linkindex - 1));
-                }
+                    var totalLinkNum = linkNum[d.source.id + "," + d.target.id] || linkNum[d.target.id + "," + d.source.id];
+                    if (totalLinkNum > 1) {
+                        dr = dr / (1 + (1 / totalLinkNum) * (d.linkindex - 1));
+                    }
 
-                return "M" + d.source.x + "," + d.source.y +
-                "A" + dr + "," + dr + " 0 0 1," + d.target.x + "," + d.target.y +
-                "A" + dr + "," + dr + " 0 0 0," + d.source.x + "," + d.source.y;
-            })
+                    return "M" + d.source.x + "," + d.source.y +
+                        "A" + dr + "," + dr + " 0 0 1," + d.target.x + "," + d.target.y +
+                        "A" + dr + "," + dr + " 0 0 0," + d.source.x + "," + d.source.y;
+                })
         }
-    });
 
+        function dragstarted(d) {
+            if (!d3.event.active) simulation.alphaTarget(0.3).restart();
+            d.fx = d.x;
+            d.fy = d.y;
+        }
 
+        function dragged(d) {
+            d.fx = d3.event.x;
+            d.fy = d3.event.y;
+        }
+
+        function dragended(d) {
+            if (!d3.event.active) simulation.alphaTarget(0);
+            d.fx = null;
+            d.fy = null;
+        }
+    };
+    d3.json("/topology_data", draw);
+    /*
+    var update = function () {
+        d3.json("/topology_data", draw);
+    };
+    d3.interval(update, 2000, d3.now());
+    */
 });
 
-function clickcancel() {
-    var event = d3.dispatch('click', 'dblclick');
 
-    function cc(selection) {
-        var down,
-            tolerance = 5,
-            last,
-            wait = null;
-        // euclidean distance
-        function dist(a, b) {
-            return Math.sqrt(Math.pow(a[0] - b[0], 2) + Math.pow(a[1] - b[1], 2));
-        }
-
-        selection.on('mousedown', function () {
-            down = d3.mouse(document.body);
-            last = +new Date();
-        });
-        selection.on('mouseup', function () {
-            if (dist(down, d3.mouse(document.body)) > tolerance) {
-                return;
-            } else {
-                if (wait) {
-                    window.clearTimeout(wait);
-                    wait = null;
-                    event.call("dblclick");
-                } else {
-                    wait = window.setTimeout(function () {
-                        event.call("click");
-                        wait = null;
-                    }, 300);
-                }
-            }
-        });
-    };
-
-    // The '.on' instance method that accepts event
-    // listeners. Unlike d3 v4, this cannot be simply
-    // achieved via d3.rebind, which no longer exists
-    cc.on = function () {
-        var value = event.on.apply(event, arguments);
-        return value === event ? cc : value;
-    };
-
-    return cc
-}
-
-function dragstarted(d) {
-    if (!d3.event.active) simulation.alphaTarget(0.3).restart();
-    d.fx = d.x;
-    d.fy = d.y;
-}
-
-function dragged(d) {
-    d.fx = d3.event.x;
-    d.fy = d3.event.y;
-}
-
-function dragended(d) {
-    if (!d3.event.active) simulation.alphaTarget(0);
-    d.fx = null;
-    d.fy = null;
-}
-
-function rm_vm_from_networks(){
+function rm_vm_from_networks() {
     var selected_subnets = $('#subnets :checked');
-    if(selected_subnets != []){
+    if (selected_subnets != []) {
         var network_ids = [];
-        for(var i = 0; i < selected_subnets.length; i++){
+        for (var i = 0; i < selected_subnets.length; i++) {
             network_ids.push(selected_subnets[i].name.substring(9));
         }
         console.log(network_ids);
         $.post('/rm_vm_from_networks/', {
-            'network_ids':network_ids.join(','),
-            'info_id':selected_vm_info_id,
-        }, function(response){
-            if(response == 'Offline'){
+            'network_ids': network_ids.join(','),
+            'info_id': selected_vm_info_id,
+        }, function (response) {
+            if (response == 'Offline') {
                 alert('Be sure to start this vm, if you want to remove it from any subnet!');
-            }else if(response == 'Failed'){
+            } else if (response == 'Failed') {
                 alert('Failed to remove this vm from a subnet.');
-            }else{
+            } else {
                 alert('Succeed!');
                 location.reload();
             }
 
         })
-    }else{
+    } else {
         alert("Please choose a subnet at least!");
     }
 }
 
-function confirmDeleteNet(){
+function confirmDeleteNet() {
     $.post('/del_network/', {
-        'network_id':selected_subnet
-    }, function(response){
-        if(response == 'Offline'){
+        'network_id': selected_subnet
+    }, function (response) {
+        if (response == 'Offline') {
             alert('Be sure to start all relevant virtual machines, ' +
                 'if you want to delete this subnet!');
-        }else if(response == 'Failed'){
+        } else if (response == 'Failed') {
             alert('Failed to delete this subnet.');
-        }else{
+        } else {
             alert('Succeed!');
             location.reload();
         }
     })
 }
 
-function confirmAddVM(){
+function confirmAddVM() {
     var selected_vms = $('#vms :checked');
-    if(selected_vms != []){
+    if (selected_vms != []) {
         $.post('/add_vm_in_network/', {
-            'network_id':selected_subnet,
-            'vm_info_ids':available_vms.map(function(x){
+            'network_id': selected_subnet,
+            'vm_info_ids': available_vms.map(function (x) {
                 return x.id;
             }).join(',')
-        }, function(response){
-            if(response.offline_vms_name != undefined){
+        }, function (response) {
+            if (response.offline_vms_name != undefined) {
                 var failed_vms_name_str =
-                alert('Failed to add offline virtual machine(s) into this subnet: \n' +
-                    response.offline_vms_name.join(',') + '\n' +
-                    'Please start them(it)!');
-            }else if(response == 'Failed'){
+                    alert('Failed to add offline virtual machine(s) into this subnet: \n' +
+                        response.offline_vms_name.join(',') + '\n' +
+                        'Please start them(it)!');
+            } else if (response == 'Failed') {
                 alert('Failed to add this vm into this subnet.');
-            }else{
+            } else {
                 alert('Succeed!');
                 location.reload();
             }
         });
-    }else{
+    } else {
         alert("Please choose a virtual machine at least!");
     }
 }
-
