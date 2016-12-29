@@ -46,8 +46,26 @@ $(document).ready(function () {
                 action: function (elm, d) {
                     window.open("/detail/" + d.id + "/");
                 }
-            }];
+            },
+                {
+                    title: 'Shutdown',
+                    action: function (elm, d) {
+                        $.post('/control_vm/', {
+                            'uuid': d.uuid,
+                            'vm-name': d.name,
+                            'request_type': 'shutdown'
+                        }, function (response) {
+                            var response_json = eval('(' + response + ')');
+                            if (response_json.request_result === 'success') {
+                                alert("Shutdown Success!");
+                                location.reload();
+                            }
+                        })
+                    }
+                }
+            ];
         }
+        ;
     };
 
     var link_menu = function (d) {
@@ -319,11 +337,11 @@ $(document).ready(function () {
     };
     d3.json("/topology_data", draw);
     /*
-    var update = function () {
-        d3.json("/topology_data", draw);
-    };
-    d3.interval(update, 2000, d3.now());
-    */
+     var update = function () {
+     d3.json("/topology_data", draw);
+     };
+     d3.interval(update, 2000, d3.now());
+     */
 });
 
 
