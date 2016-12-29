@@ -1,5 +1,5 @@
+var node_subnets, nodes, links, selected_vm_info_id, selected_subnet, available_vms;
 $(document).ready(function () {
-    var node_subnets, nodes, links, selected_vm_info_id, selected_subnet, available_vms;
     var svg = d3.select("svg"),
         width = +svg.property("clientWidth"),
         height = +svg.property("clientHeight");
