@@ -150,7 +150,7 @@ function configurationOfSubnet(){
 }
 
 function applySubnet(){
-    var net_type = $("#net-type").val();
+    var net_type = $("#net-type-selector").val();
     var net_name = $("#net-name").val();
     var net_ip = $("#net-ip").val();
     var net_mask = $("#net-mask").val();
