@@ -67,6 +67,17 @@ def create_intnet(user, host, net_name, ip, netmask, lower_ip, upper_ip):
     network.save()
 
 
+def create_hostonly(user, host, ip, netmask, lower_ip, upper_ip):
+    data_dict = dict(request_type="network", request_id=random_str(), request_userid=user.id,
+                     operation_type=CREATE_HOSTONLY, ip=ip, netmask=netmask, lower_ip=lower_ip, upper_ip=upper_ip)
+    response_dict = communicate(data_dict, host.ip, host.vm_manager_port)
+    net_name = response_dict["net_name"]
+    network = Network(name=net_name, type=HOSTONLY, host=host, ip=ip, netmask=netmask, lower_ip=lower_ip,
+                      upper_ip=upper_ip, machines=json.dumps([]))
+    network.save()
+    return net_name
+
+
 def delete_intnet(user, host, network):
     cascaded_delete_interface(network)
     data_dict = dict(request_type="network", request_id=random_str(), request_userid=user.id,
@@ -75,13 +86,34 @@ def delete_intnet(user, host, network):
     network.delete()
 
 
+def delete_hostonly(user, host, network):
+    cascaded_delete_interface(network)
+    data_dict = dict(request_type="network", request_id=random_str(), request_userid=user.id,
+                     operation_type=DELETE_HOSTONLY, net_name=network.name)
+    communicate(data_dict, host.ip, host.vm_manager_port)
+    network.delete()
+
+
 def add_vm_to_intnet(user, network, vm):
     if_code, if_no, vm_interface = set_vm_network(vm, network)
-
     if if_no > 0:
         print(vm.name)
         data_dict = dict(request_type="network", request_id=random_str(), request_userid=user.id,
                          operation_type=ADD_VM_TO_INTNET, net_name=network.name, vm_name=vm.name, if_code=if_code,
+                         if_no=if_no)
+        communicate(data_dict, vm.host.ip, vm.host.vm_manager_port)
+        vm_interface.save()
+        machines = json.loads(network.machines)
+        machines.append(vm.info_id)
+        network.machines = json.dumps(machines)
+        network.save()
+
+
+def add_vm_to_hostonly(user, network, vm):
+    if_code, if_no, vm_interface = set_vm_network(vm, network)
+    if if_no > 0:
+        data_dict = dict(request_type="network", request_id=random_str(), request_userid=user.id,
+                         operation_type=ADD_VM_TO_HOSTONLY, net_name=network.name, vm_name=vm.name, if_code=if_code,
                          if_no=if_no)
         communicate(data_dict, vm.host.ip, vm.host.vm_manager_port)
         vm_interface.save()
@@ -124,39 +156,6 @@ def remove_vm_from_network(user, vm, network):
     print(vm.name)
 
 
-def create_hostonly(user, host, ip, netmask, lower_ip, upper_ip):
-    data_dict = dict(request_type="network", request_id=random_str(), request_userid=user.id,
-                     operation_type=CREATE_HOSTONLY, ip=ip, netmask=netmask, lower_ip=lower_ip, upper_ip=upper_ip)
-
-    response_dict = communicate(data_dict, host.ip, host.vm_manager_port)
-    net_name = response_dict["net_name"]
-    network = Network(name=net_name, type=INTNET, host=host, ip=ip, netmask=netmask, lower_ip=lower_ip,
-                      upper_ip=upper_ip, machines=json.dumps([]))
-    network.save()
-
-
-def delete_hostonly(user, host, network):
-    cascaded_delete_interface(network)
-    data_dict = dict(request_type="network", request_id=random_str(), request_userid=user.id,
-                     operation_type=DELETE_HOSTONLY, net_name=network.name)
-    communicate(data_dict, host.ip, host.vm_manager_port)
-    network.delete()
-
-
-def add_vm_to_hostonly(user, network, vm):
-    if_code, if_no, vm_interface = set_vm_network(vm, network)
-    if if_no > 0:
-        data_dict = dict(request_type="network", request_id=random_str(), request_userid=user.id,
-                         operation_type=ADD_VM_TO_HOSTONLY, net_name=network.name, vm_name=vm.name, if_code=if_code,
-                         if_no=if_no)
-        communicate(data_dict, vm.host.ip, vm.host.vm_manager_port)
-        vm_interface.save()
-        machines = json.loads(network.machines)
-        machines.append(vm.info_id)
-        network.machines = json.dumps(machines)
-        network.save()
-
-
 def create_intnet_with_vms_req(request):
     try:
         vms = (request.POST.get('vms', '')).split(',')
@@ -174,8 +173,8 @@ def create_intnet_with_vms_req(request):
                 network = Network.objects.get(name=net_name)
                 add_vm_to_intnet(request.user, network, vm)
 
-        elif net_type == 'Host-Only':
-            create_hostonly(request.user, host, net_ip, net_mask, lower_ip, upper_ip)
+        else:
+            net_name = create_hostonly(request.user, host, net_ip, net_mask, lower_ip, upper_ip)
             for vm_name in vms:
                 vm = VM.objects.get(name=vm_name)
                 network = Network.objects.get(name=net_name)
@@ -208,7 +207,10 @@ def del_network_req(request):
         network_id = request.POST.get('network_id', '')
         network = Network.objects.get(id=network_id)
         host = network.host
-        delete_intnet(request.user, host, network)
+        if network.type == INTNET:
+            delete_intnet(request.user, host, network)
+        if network.type == HOSTONLY:
+            delete_hostonly(request.user, host, network)
         return HttpResponse('Succeed')
     except:
         return HttpResponse('Failed')
@@ -226,16 +228,12 @@ def add_vm_to_intnet_req(request):
                 offline_vm_names.append(vm.name)
             else:
                 add_vm_to_intnet(request.user, network, vm)
-        if offline_vm_names == []:
+        if not offline_vm_names:
             return HttpResponse('Succeed')
         else:
             return HttpResponse(json.dumps({'offline_vms_name': offline_vm_names}))
     except:
         return HttpResponse('Failed')
-
-
-def create_hostonly_with_vms():
-    pass
 
 
 def cascaded_delete_interface(network):
