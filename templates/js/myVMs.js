@@ -65,9 +65,9 @@ $(document).ready(function(){
         $.post('/control_vm/', {'uuid': items[1].text(), 'vm-name': items[0].text(), 'request_type': 'savestate'}, function(response){
             var response_json = eval('(' + response + ')');
             if (response_json.request_result === 'success'){
-                item[4].removeClass("disabled");
-                item[7].removeClass("disabled");
-                item[2].removeClass("fa-spinner fa-pulse fa-2x").addClass("fa-hdd-o").text(" Hibernating");
+                items[4].removeClass("disabled");
+                items[7].removeClass("disabled");
+                items[2].removeClass("fa-spinner fa-pulse fa-2x").addClass("fa-hdd-o").text(" Hibernating");
             }
         }); 
     });
