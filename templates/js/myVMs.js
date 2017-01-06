@@ -9,8 +9,7 @@ $(document).ready(function(){
             $('#subnet-name-input input').val("");
             $('#subnet-name-input').hide();
         }
-
-    })
+    });
 
     $("div.progress").hide();
     $(".state").hide();
@@ -147,6 +146,10 @@ function configurationOfSubnet(){
     }else{
         $('#networkModal').modal();
     }
+}
+
+function jumpToShell(){
+    window.open("https://58.205.208.81:8080");
 }
 
 function applySubnet(){
